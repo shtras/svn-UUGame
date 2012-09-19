@@ -1,0 +1,331 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{78A9C472-80FC-4464-A23A-D36EA1A74D67}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>Gamani</RootNamespace>
+    <ProjectName>UUGame</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OpenMPSupport>false</OpenMPSupport>
+      <AdditionalIncludeDirectories>.;Objects;Math;GUI;GUI/Forms;Generic;Models;pngLib;Autopilot;Missions;ADP;ADP/Compiler</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glut32.lib;glu32.lib;opengl32.lib;glew32.lib;glew32s.lib;libpng.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>pngLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PreBuildEvent>
+      <Command>build_num.exe</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <OpenMPSupport>true</OpenMPSupport>
+      <AdditionalIncludeDirectories>Objects;Math;GUI;GUI/Forms;Generic;Models;pngLib;Autopilot;.;Missions</AdditionalIncludeDirectories>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>glut32.lib;glu32.lib;opengl32.lib;glew32.lib;glew32s.lib;libpng.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>MSVCRT;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PreBuildEvent>
+      <Command>build_num.exe</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>false</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <OpenMPSupport>false</OpenMPSupport>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>.;Objects;Math;GUI;GUI/Forms;Generic;Models;pngLib;Autopilot;Missions;ADP</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <CreateHotpatchableImage>false</CreateHotpatchableImage>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glut32.lib;glu32.lib;opengl32.lib;glew32.lib;glew32s.lib;libpng.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>pngLib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <TargetMachine>MachineX86</TargetMachine>
+      <LinkTimeCodeGeneration>UseLinkTimeCodeGeneration</LinkTimeCodeGeneration>
+    </Link>
+    <PreBuildEvent>
+      <Command>build_num.exe</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>Full</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
+      <OpenMPSupport>true</OpenMPSupport>
+      <WholeProgramOptimization>true</WholeProgramOptimization>
+      <AdditionalIncludeDirectories>Objects;Math;GUI;GUI/Forms;Generic;Models;pngLib;Autopilot;.;Missions</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <CallingConvention>Cdecl</CallingConvention>
+      <ExceptionHandling>Sync</ExceptionHandling>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <MinimalRebuild>false</MinimalRebuild>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>glut32.lib;glu32.lib;opengl32.lib;glew32.lib;glew32s.lib;libpng.lib;zlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+    </Link>
+    <PreBuildEvent>
+      <Command>build_num.exe</Command>
+    </PreBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ADPCompiler.cpp" />
+    <ClCompile Include="ADPISA.cpp" />
+    <ClCompile Include="ADP\ADP.cpp" />
+    <ClCompile Include="ADP\ADPFactory.cpp" />
+    <ClCompile Include="Autopilot\APProgram.cpp" />
+    <ClCompile Include="Autopilot\Autopilot.cpp" />
+    <ClCompile Include="auxFuncs.cpp" />
+    <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="UUGame.cpp" />
+    <ClCompile Include="Generic\CString.cpp" />
+    <ClCompile Include="GUI\Display.cpp" />
+    <ClCompile Include="GUI\Forms\APDisplay.cpp" />
+    <ClCompile Include="GUI\Forms\MainMenu.cpp" />
+    <ClCompile Include="GUI\Forms\MissionDisplay.cpp" />
+    <ClCompile Include="GUI\Forms\NavDisplay.cpp" />
+    <ClCompile Include="GUI\Forms\CommDisplay.cpp" />
+    <ClCompile Include="GUI\Forms\TextPanel.cpp" />
+    <ClCompile Include="GUI\Forms\UpperPanel.cpp" />
+    <ClCompile Include="GUI\GUIRenderer.cpp" />
+    <ClCompile Include="GUI\LayoutManager.cpp" />
+    <ClCompile Include="GUI\WButton.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
+    <ClCompile Include="GUI\WInput.cpp" />
+    <ClCompile Include="GUI\WLayout.cpp" />
+    <ClCompile Include="GUI\WMenu.cpp" />
+    <ClCompile Include="GUI\WText.cpp" />
+    <ClCompile Include="GUI\WTextBox.cpp" />
+    <ClCompile Include="HUD.cpp" />
+    <ClCompile Include="Logger.cpp" />
+    <ClCompile Include="Math\Matrix.cpp" />
+    <ClCompile Include="Math\Vector.cpp" />
+    <ClCompile Include="Missions\Mission.cpp" />
+    <ClCompile Include="Missions\MissionManager.cpp" />
+    <ClCompile Include="Models\GLTexture.cpp" />
+    <ClCompile Include="Models\Model.cpp" />
+    <ClCompile Include="Models\ModelDB.cpp" />
+    <ClCompile Include="Models\ParticleManager.cpp" />
+    <ClCompile Include="Models\SphereVBO.cpp" />
+    <ClCompile Include="Models\Wrapper3DS.cpp" />
+    <ClCompile Include="Objects\AstralBody.cpp" />
+    <ClCompile Include="Objects\Dockable.cpp" />
+    <ClCompile Include="Objects\DynamicBody.cpp" />
+    <ClCompile Include="Objects\ModelRenderable.cpp" />
+    <ClCompile Include="Objects\Planet.cpp" />
+    <ClCompile Include="Objects\Renderable.cpp" />
+    <ClCompile Include="Objects\Satellite.cpp" />
+    <ClCompile Include="Objects\Ship.cpp" />
+    <ClCompile Include="Objects\Star.cpp" />
+    <ClCompile Include="Objects\StarSystem.cpp" />
+    <ClCompile Include="Objects\Station.cpp" />
+    <ClCompile Include="pngLib\PngWrapper.cpp" />
+    <ClCompile Include="Renderer.cpp" />
+    <ClCompile Include="SkyBox.cpp" />
+    <ClCompile Include="StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SystemParser.cpp" />
+    <ClCompile Include="World.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ADPCompiler.h" />
+    <ClInclude Include="ADPISA.h" />
+    <ClInclude Include="ADP\ADP.h" />
+    <ClInclude Include="ADP\ADPFactory.h" />
+    <ClInclude Include="Autopilot\APProgram.h" />
+    <ClInclude Include="Autopilot\Autopilot.h" />
+    <ClInclude Include="auxFuncs.h" />
+    <ClInclude Include="Camera.h" />
+    <ClInclude Include="UUGame.h" />
+    <ClInclude Include="Generic\CString.h" />
+    <ClInclude Include="GUI\Display.h" />
+    <ClInclude Include="GUI\Forms\APDisplay.h" />
+    <ClInclude Include="GUI\Forms\MainMenu.h" />
+    <ClInclude Include="GUI\Forms\MissionDisplay.h" />
+    <ClInclude Include="GUI\Forms\NavDisplay.h" />
+    <ClInclude Include="GUI\Forms\CommDisplay.h" />
+    <ClInclude Include="GUI\Forms\TextPanel.h" />
+    <ClInclude Include="GUI\Forms\UpperPanel.h" />
+    <ClInclude Include="GUI\GUIRenderer.h" />
+    <ClInclude Include="GUI\LayoutManager.h" />
+    <ClInclude Include="GUI\WButton.h" />
+    <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Widgets.h" />
+    <ClInclude Include="GUI\WInput.h" />
+    <ClInclude Include="GUI\WLayout.h" />
+    <ClInclude Include="GUI\WMenu.h" />
+    <ClInclude Include="GUI\WText.h" />
+    <ClInclude Include="GUI\WTextBox.h" />
+    <ClInclude Include="HUD.h" />
+    <ClInclude Include="Logger.h" />
+    <ClInclude Include="Math\Matrix.h" />
+    <ClInclude Include="Math\Vector.h" />
+    <ClInclude Include="Missions\Mission.h" />
+    <ClInclude Include="Missions\MissionManager.h" />
+    <ClInclude Include="Models\GLTexture.h" />
+    <ClInclude Include="Models\Model.h" />
+    <ClInclude Include="Models\ModelDB.h" />
+    <ClInclude Include="Models\ParticleManager.h" />
+    <ClInclude Include="Models\SphereVBO.h" />
+    <ClInclude Include="Models\Wrapper3DS.h" />
+    <ClInclude Include="Objects\AstralBody.h" />
+    <ClInclude Include="Objects\Dockable.h" />
+    <ClInclude Include="Objects\DynamicBody.h" />
+    <ClInclude Include="Objects\ModelRenderable.h" />
+    <ClInclude Include="Objects\Planet.h" />
+    <ClInclude Include="Objects\Renderable.h" />
+    <ClInclude Include="Objects\Satellite.h" />
+    <ClInclude Include="Objects\Ship.h" />
+    <ClInclude Include="Objects\Star.h" />
+    <ClInclude Include="Objects\StarSystem.h" />
+    <ClInclude Include="Objects\Station.h" />
+    <ClInclude Include="Renderer.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="sigslot.h" />
+    <ClInclude Include="SkyBox.h" />
+    <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SystemParser.h" />
+    <ClInclude Include="VersionInfo.h" />
+    <ClInclude Include="World.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
