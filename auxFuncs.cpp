@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "auxFuncs.h"
+#include <strsafe.h>
 
 double RadToDeg(double rad)
 {
@@ -44,186 +45,110 @@ void checkReleaseError(CString errorMsg)
   checkErrorDebug(errorMsg);
 }
 
-char *textFileRead(const char *fn) 
+vector<CString> getFileNames(CString dir)
 {
-  FILE *fp;
-  char *content = NULL;
-  int count=0;
-  if (fn != NULL) {
-    fp = fopen(fn,"rt");
-    if (fp != NULL) {
-      fseek(fp, 0, SEEK_END);
-      count = ftell(fp);
-      rewind(fp);
-      if (count > 0) {
-        content = (char *)malloc(sizeof(char) * (count+1));
-        count = fread(content,sizeof(char),count,fp);
-        content[count] = '\0';
-      }
-      fclose(fp);
+  vector<CString> res;
+  dir += "/*";
+
+  HANDLE hFind = INVALID_HANDLE_VALUE;
+  WIN32_FIND_DATAA FindFileData;
+
+  hFind = FindFirstFileA(dir, &FindFileData);
+
+  if (hFind == INVALID_HANDLE_VALUE) {
+    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot get files from " + dir);
+    return res;
+  }
+
+  int nextFileExists = 0;
+
+  do {
+    CString fileName = FindFileData.cFileName;
+    if (!(FindFileData.dwFileAttributes & 0x10)) {
+      //Not a directory
+      res.push_back(fileName);
     }
-  }
-  return content;
-}
+    nextFileExists = FindNextFileA(hFind, &FindFileData);
+  } while (nextFileExists);
 
-void printShaderInfoLog(GLuint obj)
-{
-  int infologLength = 0;
-  int charsWritten  = 0;
-  char *infoLog;
-
-  glGetShaderiv(obj, GL_INFO_LOG_LENGTH,&infologLength);
-
-  if (infologLength > 0)
-  {
-    infoLog = (char *)malloc(infologLength);
-    glGetShaderInfoLog(obj, infologLength, &charsWritten, infoLog);
-    printf("%s\n",infoLog);
-    free(infoLog);
-  }
-}
-
-void deleteShaders(GLuint shader)
-{
-  glDeleteProgram(shader);
-}
-
-void setShaders(const char* vertex, const char* frag, GLuint* pn)
-{
-  char *vs = NULL,*fs = NULL,*fs2 = NULL;
-
-  GLuint v = glCreateShader(GL_VERTEX_SHADER);
-  GLuint f = glCreateShader(GL_FRAGMENT_SHADER);
-
-  vs = textFileRead(vertex);
-  fs = textFileRead(frag);
-
-  const char * ff = fs;
-  const char * vv = vs;
-
-  glShaderSource(v, 1, &vv,NULL);
-  glShaderSource(f, 1, &ff,NULL);
-
-  free(vs);
-  free(fs);
-
-  glCompileShader(v);
-  checkError("");
-  glCompileShader(f);
-  checkError("");
-
-  GLuint p = glCreateProgram();
-  checkError("");
-  glAttachShader(p,f);
-  checkError("");
-  glAttachShader(p,v);
-  checkError("");
-
-  cout << "v" << endl;
-  printShaderInfoLog(v);
-  cout << "f" << endl;
-  printShaderInfoLog(f);
-
-  int res;
-  glGetObjectParameterivARB(v, GL_OBJECT_COMPILE_STATUS_ARB, &res);
-  assert(res == 1);
-  glGetObjectParameterivARB(f, GL_OBJECT_COMPILE_STATUS_ARB, &res);
-  assert(res == 1);
-
-  glLinkProgram(p);
-  glDeleteShader(v);
-  glDeleteShader(f);
-  checkError("");
-  //glUseProgram(p);
-  checkError("");
-  if (pn) {
-    *pn = p;
-  } else {
-    assert(0);
-  }
-}
-
-char setBit(char byte, int bit)
-{
-  assert(bit >= 0 && bit < 8);
-  char mask = 0x80 >> bit;
-  return byte | mask;
-}
-
-char unsetBit(char byte, int bit)
-{
-  assert(bit >= 0 && bit < 8);
-  char mask = (0x80 >> bit)^0xff;
-  return byte & mask;
-}
-
-int getBit(int byte, int bit)
-{
-  assert(bit >= 0 && bit < 32);
-  int mask = 0x80 >> bit;
-  return ((byte & mask)>0)?1:0;
-}
-
-void dumpNumber(char* mem, int& offset, int number, int len)
-{
-  assert(len <= 32);
-  int start = 0;
-  if (len <= 8) {
-    start = 8-len;
-  }
-  if (len > 8) {
-    assert (len % 8 == 0);
-  }
-  int currBit = start;
-  for (int i=0; i<len; ++i) {
-    int charNum = offset/8;
-    int bitNum = offset%8;
-    int bit = getBit(number, currBit++);
-    if (currBit >= 8) {
-      currBit = 0;
-      number >>= 8;
-    }
-    if (bit) {
-      mem[charNum] = setBit(mem[charNum], bitNum);
-    } else {
-      mem[charNum] = unsetBit(mem[charNum], bitNum);
-    }
-    ++offset;
-  }
-}
-
-int getBits(char* mem, int& offset, int len)
-{
-  assert(len <= 32);
-  int res = 0;
-  for (int i=0; i<len; ++i) {
-    int charNum = offset/8;
-    int bitNum = offset%8;
-    int bit = getBit(mem[charNum], bitNum);
-    res += bit;
-    if (i != len-1) {
-      res <<= 1;
-    }
-    ++offset;
-  }
   return res;
 }
 
-int get8bit(char* mem, int& offset)
+bool loadBMP(CString fileName, GLuint* texNum)
 {
-  return getBits(mem, offset, 8);
-}
+  FILE* file = fopen(fileName, "rb");
+  if (!file) {
+    return false;
+  }
 
-int get16bit(char* mem, int& offset)
-{
-  int i1 = get8bit(mem, offset);
-  int i2 = get8bit(mem, offset);
-  return (i2 << 8) + i1;
-}
+  char signature[2];
+  fread(signature, 1, 2, file);
+  if (signature[0] != 'B' || signature[1] != 'M') {
+    fclose(file);
+    Logger::getInstance().log(ERROR_LOG_NAME, "Wrong magic in file: " + fileName);
+    return false;
+  }
 
-int get32bit(char* mem, int& offset)
-{
-  int i1 = get16bit(mem, offset);
-  int i2 = get16bit(mem, offset);
-  return (i2 << 16) + i1;
+  struct {
+    DWORD fileSize;
+    DWORD reserved;
+    DWORD pixelOffset;
+  } bmpHeader;
+
+  fread(&bmpHeader, sizeof(bmpHeader), 1, file);
+
+  struct {
+    DWORD headerSize;
+    DWORD width;
+    DWORD height;
+    WORD planes;
+    WORD bpp;
+    DWORD compression;
+    DWORD imageSZ;
+    DWORD xppm;
+    DWORD yppm;
+    DWORD colors;
+    DWORD importantColors;
+  } dibHeader;
+
+  fread(&dibHeader, sizeof(dibHeader), 1, file);
+
+  if (dibHeader.bpp != 24) {
+    fclose(file);
+    Logger::getInstance().log(ERROR_LOG_NAME, "BMP file is not in the 24bit format: " + fileName);
+    return false;
+  }
+
+  fseek(file, bmpHeader.pixelOffset, SEEK_SET);
+  unsigned char* buffer = new unsigned char[dibHeader.width * dibHeader.height * 3];
+  if (fread(buffer, dibHeader.width*dibHeader.height*3, 1, file) != 1) {
+    delete[] buffer;
+    Logger::getInstance().log(ERROR_LOG_NAME, "Could not load image data from: " + fileName);
+    fclose(file);
+    return false;
+  }
+  fclose(file);
+
+  unsigned char temp;
+  for (uint32_t i=0; i<dibHeader.width*dibHeader.height*3; i+=3) { // reverse all of the colors. (bgr -> rgb)
+    temp = buffer[i];
+    buffer[i] = buffer[i+2];
+    buffer[i+2] = temp;
+  }
+
+  glGenTextures(1, texNum);
+  glBindTexture(GL_TEXTURE_2D, *texNum);
+
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST); //The minifying function
+  glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
+  glTexImage2D(GL_TEXTURE_2D, 0, 3, dibHeader.width, dibHeader.height, 0, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+  gluBuild2DMipmaps(GL_TEXTURE_2D, 3, dibHeader.width, dibHeader.height, GL_RGB, GL_UNSIGNED_BYTE, buffer);
+  delete[] buffer;
+
+  checkReleaseError("Could not initialize texture from file: " + fileName);
+
+  return true;
 }

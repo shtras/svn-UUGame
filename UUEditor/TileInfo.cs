@@ -18,5 +18,8 @@ namespace UUEditor
         public WallType right;
         public WallType down;
         public WallType left;
+
+        public bool exists = true;
+        public bool passible = true;
     }
 }

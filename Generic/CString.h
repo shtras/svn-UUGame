@@ -4,6 +4,7 @@ using namespace std;
 
 class CString
 {
+  friend CString operator+ (const char* s1, const CString& s2);
 public:
   CString();
   CString(const CString& other);
@@ -20,7 +21,7 @@ public:
   int getSize() const;
   CString append(const CString& other) const;
   int getIndex(char c) const;
-  bool contains(CString& other) const;
+  bool contains(CString other) const;
   bool contains(char c) const;
   operator const char*() const;
   CString operator+ (const CString& other) const;
@@ -44,3 +45,5 @@ private:
 
   //string str_;
 };
+
+CString operator+ (const char* s1, const CString& s2);

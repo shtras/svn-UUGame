@@ -15,69 +15,21 @@
     <Filter Include="Source Files\Math">
       <UniqueIdentifier>{cae97501-3106-4499-98a1-14967189dad4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\GUI">
-      <UniqueIdentifier>{0056e5d1-860e-49cd-b9b6-8433a4c97e1d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUI">
-      <UniqueIdentifier>{2adf5da6-481c-472c-a639-0ea066da50d2}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\GUI\Forms">
-      <UniqueIdentifier>{198c88be-7cee-48e3-976c-dfc4f5f2380f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\GUI\Forms">
-      <UniqueIdentifier>{ebc8ea86-d4fb-4b33-8855-ccdedb7f8067}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Objects">
-      <UniqueIdentifier>{0af9ad3a-f4f0-41bb-8055-9632c5e40c78}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Objects">
-      <UniqueIdentifier>{731296b8-feb9-4ab2-bb07-a5b4567a6d83}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Generic">
       <UniqueIdentifier>{d593b4e7-f58e-4837-b158-fa5d1c749745}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Generic">
       <UniqueIdentifier>{206be82b-4a56-4991-9ae1-14ed5c099231}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Models">
-      <UniqueIdentifier>{7699b591-c0d5-4d76-bf0c-c40a2ee30284}</UniqueIdentifier>
+    <Filter Include="Header Files\Ship">
+      <UniqueIdentifier>{3af7f964-dbe8-4430-a48a-fe2d3d8e05cd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Models">
-      <UniqueIdentifier>{27f0f563-36ec-4296-b5d6-dc0f4eaf0200}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Autopilot">
-      <UniqueIdentifier>{aef1748c-7549-47da-9267-a36afdca1419}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Autopilot">
-      <UniqueIdentifier>{77a69a61-4de4-4dee-a5c3-fb9994fd9a4b}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\Missions">
-      <UniqueIdentifier>{95c1b6f5-7e39-4d63-a75b-a08ed7ced245}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Missions">
-      <UniqueIdentifier>{79515a4c-d617-493e-9324-1907ab79c63d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ADP">
-      <UniqueIdentifier>{8ddaeb81-9c40-43fb-b266-2c81bbc3a241}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ADP">
-      <UniqueIdentifier>{d47461e9-62d3-4e49-b8f2-c2d112070383}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\ADP\Compiler">
-      <UniqueIdentifier>{dfb233a6-952b-420d-90bb-502fc38eaf86}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ADP\Compiler">
-      <UniqueIdentifier>{6299d6c3-060b-451b-94e2-95ccf199c707}</UniqueIdentifier>
+    <Filter Include="Source Files\Ship">
+      <UniqueIdentifier>{b9d8bee0-3da6-4186-b239-7b36ade23136}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Camera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="World.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Math\Matrix.cpp">
@@ -86,214 +38,28 @@
     <ClCompile Include="Math\Vector.cpp">
       <Filter>Source Files\Math</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Widget.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WButton.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WLayout.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WText.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\GUIRenderer.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\AstralBody.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\DynamicBody.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Planet.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Renderable.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Ship.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Star.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\StarSystem.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\NavDisplay.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\LayoutManager.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="HUD.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Display.cpp">
-      <Filter>Source Files\GUI</Filter>
     </ClCompile>
     <ClCompile Include="Generic\CString.cpp">
       <Filter>Source Files\Generic</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\WMenu.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\Model.cpp">
-      <Filter>Source Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\Wrapper3DS.cpp">
-      <Filter>Source Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\GLTexture.cpp">
-      <Filter>Source Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\ModelRenderable.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="SkyBox.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="pngLib\PngWrapper.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Station.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="Autopilot\Autopilot.cpp">
-      <Filter>Source Files\Autopilot</Filter>
-    </ClCompile>
-    <ClCompile Include="Autopilot\APProgram.cpp">
-      <Filter>Source Files\Autopilot</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\UpperPanel.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Dockable.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
     <ClCompile Include="auxFuncs.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\APDisplay.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WInput.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Missions\MissionManager.cpp">
-      <Filter>Source Files\Missions</Filter>
-    </ClCompile>
-    <ClCompile Include="Missions\Mission.cpp">
-      <Filter>Source Files\Missions</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\MissionDisplay.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
     </ClCompile>
     <ClCompile Include="Logger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SystemParser.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\WTextBox.cpp">
-      <Filter>Source Files\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\SphereVBO.cpp">
-      <Filter>Source Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\ModelDB.cpp">
-      <Filter>Source Files\Models</Filter>
-    </ClCompile>
-    <ClCompile Include="Models\ParticleManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Objects\Satellite.cpp">
-      <Filter>Source Files\Objects</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\MainMenu.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\CommDisplay.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="GUI\Forms\TextPanel.cpp">
-      <Filter>Source Files\GUI\Forms</Filter>
-    </ClCompile>
-    <ClCompile Include="ADP\ADP.cpp">
-      <Filter>Source Files\ADP</Filter>
-    </ClCompile>
-    <ClCompile Include="ADPCompiler.cpp">
-      <Filter>Source Files\ADP\Compiler</Filter>
-    </ClCompile>
-    <ClCompile Include="ADPISA.cpp">
-      <Filter>Source Files\ADP</Filter>
-    </ClCompile>
-    <ClCompile Include="ADP\ADPFactory.cpp">
-      <Filter>Source Files\ADP</Filter>
-    </ClCompile>
     <ClCompile Include="UUGame.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Ship\Ship.cpp">
+      <Filter>Source Files\Ship</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Autopilot\APProgram.h">
-      <Filter>Header Files\Autopilot</Filter>
-    </ClInclude>
-    <ClInclude Include="Autopilot\Autopilot.h">
-      <Filter>Header Files\Autopilot</Filter>
-    </ClInclude>
     <ClInclude Include="Generic\CString.h">
       <Filter>Header Files\Generic</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Display.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\GUIRenderer.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\LayoutManager.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WButton.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widget.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Widgets.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WInput.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WLayout.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WMenu.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WText.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\WTextBox.h">
-      <Filter>Header Files\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\APDisplay.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\MissionDisplay.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\NavDisplay.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\UpperPanel.h">
-      <Filter>Header Files\GUI\Forms</Filter>
     </ClInclude>
     <ClInclude Include="Math\Matrix.h">
       <Filter>Header Files\Math</Filter>
@@ -301,58 +67,7 @@
     <ClInclude Include="Math\Vector.h">
       <Filter>Header Files\Math</Filter>
     </ClInclude>
-    <ClInclude Include="Missions\Mission.h">
-      <Filter>Header Files\Missions</Filter>
-    </ClInclude>
-    <ClInclude Include="Missions\MissionManager.h">
-      <Filter>Header Files\Missions</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\GLTexture.h">
-      <Filter>Header Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\Model.h">
-      <Filter>Header Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\Wrapper3DS.h">
-      <Filter>Header Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\AstralBody.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Dockable.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\DynamicBody.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\ModelRenderable.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Planet.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Renderable.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Ship.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Star.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\StarSystem.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Station.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
     <ClInclude Include="auxFuncs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Camera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HUD.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Logger.h">
@@ -361,62 +76,17 @@
     <ClInclude Include="Renderer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="sigslot.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SkyBox.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SystemParser.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="VersionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="World.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\SphereVBO.h">
-      <Filter>Header Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\ModelDB.h">
-      <Filter>Header Files\Models</Filter>
-    </ClInclude>
-    <ClInclude Include="Models\ParticleManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Objects\Satellite.h">
-      <Filter>Header Files\Objects</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\MainMenu.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\CommDisplay.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="GUI\Forms\TextPanel.h">
-      <Filter>Header Files\GUI\Forms</Filter>
-    </ClInclude>
-    <ClInclude Include="ADP\ADP.h">
-      <Filter>Header Files\ADP</Filter>
-    </ClInclude>
-    <ClInclude Include="ADPCompiler.h">
-      <Filter>Header Files\ADP\Compiler</Filter>
-    </ClInclude>
-    <ClInclude Include="ADPISA.h">
-      <Filter>Header Files\ADP</Filter>
-    </ClInclude>
-    <ClInclude Include="ADP\ADPFactory.h">
-      <Filter>Header Files\ADP</Filter>
-    </ClInclude>
     <ClInclude Include="UUGame.h">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Ship\Ship.h">
+      <Filter>Header Files\Ship</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

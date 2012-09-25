@@ -131,8 +131,31 @@ int CString::getIndex(char c) const
   return -1;
 }
 
-bool CString::contains(CString& other) const
+bool CString::contains(CString other) const
 {
+  if (other.getSize() > getSize()) {
+    return false;
+  }
+  if (other.getSize() == getSize()) {
+    return *this == other;
+  }
+  int cnt = 0;
+  bool seq = false;
+  for (int i=0; i<len_; ++i) {
+    if (cont_[i] == other[cnt]) {
+      ++cnt;
+      if (seq) {
+        if (cnt == other.getSize() - 1) {
+          return true;
+        }
+      } else {
+        seq = true;
+      }
+    } else {
+      cnt = 0;
+      seq = false;
+    }
+  }
   return false;
 }
 
@@ -145,7 +168,6 @@ bool CString::contains(char c) const
   }
   return false;
 }
-
 
 CString::operator const char*() const
 {
@@ -279,4 +301,9 @@ void CString::replace(char c, char to)
       cont_[i] = to;
     }
   }
+}
+
+CString operator+ (const char* s1, const CString& s2)
+{
+  return CString(s1) + s2;
 }

@@ -13,24 +13,6 @@ void checkErrorDebug(CString errorMsg = "");
 
 void checkReleaseError(CString errorMsg);
 
-char *textFileRead(const char *fn);
+bool loadBMP(CString fileName, GLuint* texNum);
 
-void deleteShaders(GLuint shader);
-
-void setShaders(const char* vertex, const char* frag, GLuint* pn);
-
-char setBit(char byte, int bit);
-
-char unsetBit(char byte, int bit);
-
-int getBit(int byte, int bit);
-
-void dumpNumber(char* mem, int& offset, int number, int len);
-
-int getBits(char* mem, int& offset, int len);
-
-int get8bit(char* mem, int& offset);
-
-int get16bit(char* mem, int& offset);
-
-int get32bit(char* mem, int& offset);
+vector<CString> getFileNames(CString dir);

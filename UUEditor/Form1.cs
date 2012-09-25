@@ -284,6 +284,8 @@ namespace UUEditor
             downButtons[info.down].Select();
             rightButtons[info.right].Select();
             leftButtons[info.left].Select();
+            existsCB.Checked = selectedTile.exists;
+            passibleCB.Checked = selectedTile.passible;
         }
 
         private void resizeRoom()
@@ -309,16 +311,16 @@ namespace UUEditor
                         TileInfo oldTile = tiles[i, j];
                         newTiles[i, j] = oldTile;
                         if (i == width - 1) {
-                            newTiles[i, j].right = TileInfo.WallType.Empty;
+                            //newTiles[i, j].right = TileInfo.WallType.Empty;
                         }
                         if (j == height - 1) {
-                            newTiles[i, j].down = TileInfo.WallType.Empty;
+                            //newTiles[i, j].down = TileInfo.WallType.Empty;
                         }
                         if (i == x - 1) {
-                            newTiles[i, j].right = TileInfo.WallType.Wall;
+                            //newTiles[i, j].right = TileInfo.WallType.Wall;
                         }
                         if (j == y - 1) {
-                            newTiles[i, j].down = TileInfo.WallType.Wall;
+                            //newTiles[i, j].down = TileInfo.WallType.Wall;
                         }
                     } else {
                         TileInfo newTile = new TileInfo();
@@ -442,6 +444,9 @@ namespace UUEditor
                 for (int j = 0; j < height; ++j) {
                     TileInfo tile = tiles[i, j];
                     roomTilesPanel.Controls.Add(tile.tileBox);
+                    if (!tile.exists) {
+                        tile.tileBox.Image = null;
+                    }
                 }
             }
         }
@@ -489,7 +494,7 @@ namespace UUEditor
                 case 3:
                     return TileInfo.WallType.BlastDoor;
             }
-            return 0;
+            //return 0;
             throw new Exception();
         }
 
@@ -502,11 +507,12 @@ namespace UUEditor
             /*
              * UURM:4 bytes
              * tiles offset:4 bytes
-             * num tiles: 2 bytes
+             * width: byte
+             * height: byte
              * num tile textures: 2 bytes
              * [id:byte. strlen: byte. string]*
-             * (0)012 - texture id. 34 - rotation. 567 - up, (1)012 - right, 345-down, 67(2)0 - left
-             * (2)12 - type, 34567 - reserved (3)01234567 - reserved
+             * (0)012 - texture id. 34 - rotation. 567 - up, (1)012 - right, 345-down, 67
+             * (2)0 - left. 1 - exists 2 - passible, 34567 - reserved (3)01234567 - reserved
              */
             List<byte> data = new List<byte>();
             data.Add(Convert.ToByte('U'));
@@ -533,8 +539,8 @@ namespace UUEditor
             int offset = data.Count;
             byte[] offsetBytes = BitConverter.GetBytes(offset);
             data[4] = offsetBytes[0]; data[5] = offsetBytes[1]; data[6] = offsetBytes[2]; data[7] = offsetBytes[3];
-            for (int i = 0; i < width; ++i) {
-                for (int j = 0; j < height; ++j) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     TileInfo tile = tiles[i, j];
                     byte byte1 = 0;
                     byte texID = Convert.ToByte(tilesMap[Path.GetFileName(tile.tileBox.ImageLocation)]);
@@ -550,6 +556,7 @@ namespace UUEditor
                     byte2 |= (byte)((leftWall & 6) >> 1);
                     byte byte3 = 0;
                     byte3 |= (byte)((leftWall & 1) << 7);
+                    byte3 |= (byte)((tile.exists?(1<<6):0) | (tile.passible?(1<<5):0));
                     data.Add(byte1); data.Add(byte2); data.Add(byte3); data.Add(0);
                 }
             }
@@ -601,8 +608,8 @@ namespace UUEditor
             tiles = null;
             resizeRoom();
             tiles = new TileInfo[width, height];
-            for (int i = 0; i < width; ++i) {
-                for (int j = 0; j < height; ++j) {
+            for (int j = 0; j < height; ++j) {
+                for (int i = 0; i < width; ++i) {
                     byte byte1 = fileBytes[offset++];
                     byte byte2 = fileBytes[offset++];
                     byte byte3 = fileBytes[offset++];
@@ -612,7 +619,9 @@ namespace UUEditor
                     int up = byte1 & 7;
                     int right = (byte2 & 0xE0) >> 5;
                     int down = (byte2 & 0x1C) >> 2;
-                    int left = (byte2 & 1) << 2 | ((byte3 & 0xC0) >> 7);
+                    int left = (byte2 & 1) << 1 | ((byte3 & 0xC0) >> 7);
+                    bool exists = (byte3 & 0x40) != 0;
+                    bool passible = (byte3 & 0x20) != 0;
 
                     TileInfo tile = new TileInfo();
                     tile.x = i;
@@ -628,16 +637,34 @@ namespace UUEditor
                     tile.right = getWallType(right);
                     tile.down = getWallType(down);
                     tile.left = getWallType(left);
+                    tile.exists = exists;
+                    tile.passible = passible;
                     tiles[i, j] = tile;
                 }
             }
             resizeRoom();
+            redrawRoomTiles();
         }
 
         private void clearButton_Click(object sender, EventArgs e)
         {
             tiles = null;
             resizeRoom();
+        }
+
+        private void existsCB_CheckedChanged(object sender, EventArgs e)
+        {
+            selectedTile.exists = existsCB.Checked;
+            if (existsCB.Checked) {
+                selectedTile.tileBox.ImageLocation = "empty.bmp";
+            }
+            redrawRoomTiles();
+        }
+
+        private void passibleCB_CheckedChanged(object sender, EventArgs e)
+        {
+            selectedTile.passible = passibleCB.Checked;
+            redrawRoomTiles();
         }
     }
 }

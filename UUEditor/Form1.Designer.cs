@@ -56,6 +56,8 @@
             this.openButton = new System.Windows.Forms.Button();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.clearButton = new System.Windows.Forms.Button();
+            this.existsCB = new System.Windows.Forms.CheckBox();
+            this.passibleCB = new System.Windows.Forms.CheckBox();
             this.tilesPanel.SuspendLayout();
             this.panel2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.currentTileBox)).BeginInit();
@@ -174,6 +176,8 @@
             // panel2
             // 
             this.panel2.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panel2.Controls.Add(this.passibleCB);
+            this.panel2.Controls.Add(this.existsCB);
             this.panel2.Controls.Add(this.downPanel);
             this.panel2.Controls.Add(this.rightPanel);
             this.panel2.Controls.Add(this.leftPanel);
@@ -301,6 +305,28 @@
             this.clearButton.UseVisualStyleBackColor = true;
             this.clearButton.Click += new System.EventHandler(this.clearButton_Click);
             // 
+            // existsCB
+            // 
+            this.existsCB.AutoSize = true;
+            this.existsCB.Location = new System.Drawing.Point(6, 313);
+            this.existsCB.Name = "existsCB";
+            this.existsCB.Size = new System.Drawing.Size(53, 17);
+            this.existsCB.TabIndex = 7;
+            this.existsCB.Text = "Exists";
+            this.existsCB.UseVisualStyleBackColor = true;
+            this.existsCB.CheckedChanged += new System.EventHandler(this.existsCB_CheckedChanged);
+            // 
+            // passibleCB
+            // 
+            this.passibleCB.AutoSize = true;
+            this.passibleCB.Location = new System.Drawing.Point(6, 336);
+            this.passibleCB.Name = "passibleCB";
+            this.passibleCB.Size = new System.Drawing.Size(65, 17);
+            this.passibleCB.TabIndex = 8;
+            this.passibleCB.Text = "Passible";
+            this.passibleCB.UseVisualStyleBackColor = true;
+            this.passibleCB.CheckedChanged += new System.EventHandler(this.passibleCB_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -362,6 +388,8 @@
         private System.Windows.Forms.Button openButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog;
         private System.Windows.Forms.Button clearButton;
+        private System.Windows.Forms.CheckBox existsCB;
+        private System.Windows.Forms.CheckBox passibleCB;
     }
 }
 
