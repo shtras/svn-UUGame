@@ -34,8 +34,8 @@ namespace UUEditor
         Image door_v;
         Image blastDoor_v;
 
-        const int maxWidth = 15;
-        const int maxHeight = 15;
+        const int maxWidth = 20;
+        const int maxHeight = 20;
 
 
         public Form1()

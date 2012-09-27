@@ -27,6 +27,24 @@
     <Filter Include="Source Files\Ship">
       <UniqueIdentifier>{b9d8bee0-3da6-4186-b239-7b36ade23136}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Crew">
+      <UniqueIdentifier>{1c55cf89-7e42-4fb4-ad7d-1897aef42bae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Crew">
+      <UniqueIdentifier>{46d4efde-ae27-45ea-bb04-7b58b1c76021}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{71853a0b-ed4a-4b2f-a5f9-a1e785b60ab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{7e1d91d2-6c73-4006-a5a4-fc9e375a88fd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI\Forms">
+      <UniqueIdentifier>{7a4bdb3c-214f-416a-bfdb-a6f489d2ee1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\Forms">
+      <UniqueIdentifier>{0a0b5f7a-361b-4525-a2f4-cdce25240333}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -55,6 +73,57 @@
     </ClCompile>
     <ClCompile Include="Ship\Ship.cpp">
       <Filter>Source Files\Ship</Filter>
+    </ClCompile>
+    <ClCompile Include="Crew\Person.cpp">
+      <Filter>Source Files\Crew</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\GUIRenderer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\LayoutManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WButton.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Widget.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WInput.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WText.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\RoomInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\GeneralInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WTabbedLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\RoomPanel.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\TestDragDrop.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WImage.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\CrewPanel.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\PersonInfoFloating.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\RoomCrewAssignment.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -87,6 +156,63 @@
     </ClInclude>
     <ClInclude Include="Ship\Ship.h">
       <Filter>Header Files\Ship</Filter>
+    </ClInclude>
+    <ClInclude Include="Crew\Person.h">
+      <Filter>Header Files\Crew</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\GUIRenderer.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\LayoutManager.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WButton.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widget.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Widgets.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WInput.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WLayout.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WText.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\RoomInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="sigslot.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\GeneralInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WTabbedLayout.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\RoomPanel.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\TestDragDrop.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WImage.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\CrewPanel.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\PersonInfoFloating.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\RoomCrewAssingment.h">
+      <Filter>Header Files\GUI\Forms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

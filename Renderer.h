@@ -28,6 +28,8 @@ public:
   int getTextureID(CString texName);
   void setCurrentShip(Ship* ship);
   float getAspectRatio();
+  bool isWithinShipRenderArea(int& x, int& y);
+  GLuint getImage(int i) {return images_[i];}
 private:
   Renderer();
   ~Renderer();
@@ -35,7 +37,7 @@ private:
   bool initWindow();
   bool initOpenGL();
   void initTiles();
-
+  void initImages();
   bool init_;
   HWND hWnd_;
   HINSTANCE* hInstance_;
@@ -43,6 +45,9 @@ private:
   int width_;
   bool customViewPort_;
   GLuint tileTextures_[255];
+  GLuint images_[255];
   map <CString, int> tileTextureMap_;
   Ship* currentShip_;
+  float shipAreaX_;
+  float shipAreaY_;
 };

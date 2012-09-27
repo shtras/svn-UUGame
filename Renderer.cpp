@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 
-Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL)
+Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.2), shipAreaY_(0.3)
 {
 }
 
@@ -46,6 +46,7 @@ bool Renderer::init(HINSTANCE& hInstance)
   }
 
   initTiles();
+  initImages();
 
   init_ = true;
   return true;
@@ -325,7 +326,7 @@ void Renderer::textOut(double x, double y, double z, char* format, ...)
   glMatrixMode(GL_MODELVIEW);
   glPushMatrix();
   glLoadIdentity();
-  glTranslatef(x,y,z);
+  glTranslatef(x,y,z-0.1);
   glColor3f(1,1,1);
   glRasterPos3f (0, 0, 0);
   for (i = 0; text[i] != '\0'; i++) {
@@ -337,7 +338,7 @@ void Renderer::textOut(double x, double y, double z, char* format, ...)
   glPopMatrix();
   glMatrixMode(GL_MODELVIEW);
 
-  glEnable(GL_LIGHTING);
+  //glEnable(GL_LIGHTING);
 }
 
 void Renderer::render()
@@ -349,8 +350,27 @@ void Renderer::render()
   glLoadIdentity();
   glMatrixMode(GL_PROJECTION);
   glLoadIdentity();
-  glOrtho(0, 1, 0, 1, 0, 1);
+  glOrtho(0, 1, 0, 1, -10, 10);
+
+  glColor3f(1,1,1);
+  glEnable(GL_TEXTURE_2D);
+  glBindTexture(GL_TEXTURE_2D, images_[0]);
+  //glColor3f(0.8,0.8,0.8);
+  glBegin(GL_POLYGON);
+  glTexCoord2f(0, 0);
+  glVertex3f(0, 0, -0.1);
+  glTexCoord2f(1, 0);
+  glVertex3f(1, 0, -0.1);
+  glTexCoord2f(1, 1);
+  glVertex3f(1, 1, -0.1);
+  glTexCoord2f(0, 1);
+  glVertex3f(0, 1, -0.1);
+  glEnd();
+  glDisable(GL_TEXTURE_2D);
+
+
   if (currentShip_) {
+    glTranslatef(shipAreaX_, shipAreaY_, 0);
     currentShip_->render();
   }
 }
@@ -433,4 +453,33 @@ void Renderer::setCurrentShip( Ship* ship )
 float Renderer::getAspectRatio()
 {
   return (float)width_/(float)height_;
+}
+
+void Renderer::initImages()
+{
+  bool res = loadBMP("res/bg.bmp", &images_[0]);
+  if (!res) {
+    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/bg.bmp");
+  }
+
+  res = loadBMP("res/face.bmp", &images_[1]);
+  if (!res) {
+    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/face.bmp");
+  }
+
+  res = loadBMP("res/star.bmp", &images_[2]);
+  if (!res) {
+    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/star.bmp");
+  }
+}
+
+bool Renderer::isWithinShipRenderArea(int& x, int& y)
+{
+  if (x >= shipAreaX_*width_ && y <= (1-shipAreaY_)*height_) {
+    x -= shipAreaX_*width_;
+    y = height_ - y;
+    y -= shipAreaY_*height_;
+    return true;
+  }
+  return false;
 }

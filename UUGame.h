@@ -1,4 +1,7 @@
 #pragma once
+#include "LayoutManager.h"
+#include "Ship.h"
+#include "GeneralInfo.h"
 
 class UUGame
 {
@@ -22,6 +25,7 @@ public:
 private:
   void handlePressedKey(int key);
   void handlePressedKeys();
+  void handleMouseEvent(UINT message,WPARAM wParam, LPARAM lParam);
   UUGame();
   ~UUGame();
   bool mainLoop();
@@ -29,7 +33,7 @@ private:
   set<int> nonContKeys_;
   bool paused_;
   double speed_;
-  double long seconds_;
+  double long time_;
   double calcStepLength_;
   double dtModifier_;
   bool shiftPressed_;
@@ -42,5 +46,30 @@ private:
   int rmCoord_[2];
 
   CString version_;
+
+  LayoutManager layoutManager_;
+  Ship* ship_;
+  GeneralInfo* generalInfo_;
 };
 
+class Time
+{
+public:
+  static Time& getTime();
+  int getYear() {return year_;}
+  int getMonth() {return month_;}
+  int getDay() {return day_;}
+  int getHour() {return hour_;}
+  int getMinute() {return minute_;}
+  int getSecond() {return second_;}
+  void increase(int seconds);
+private:
+  Time();
+  ~Time();
+  int year_;
+  int month_;
+  int day_;
+  int hour_;
+  int minute_;
+  int second_;
+};

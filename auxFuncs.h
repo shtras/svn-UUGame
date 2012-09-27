@@ -3,6 +3,8 @@
 #include <gl/glew.h>
 #include <gl/glut.h>
 
+class WLayout;
+
 double RadToDeg(double rad);
 double DegToRad(double deg);
 
@@ -16,3 +18,5 @@ void checkReleaseError(CString errorMsg);
 bool loadBMP(CString fileName, GLuint* texNum);
 
 vector<CString> getFileNames(CString dir);
+
+float getSquareWidthForHeightInLayout(float height, WLayout* layout);

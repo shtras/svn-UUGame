@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "auxFuncs.h"
 #include <strsafe.h>
+#include "Renderer.h"
+#include "WLayout.h"
 
 double RadToDeg(double rad)
 {
@@ -151,4 +153,9 @@ bool loadBMP(CString fileName, GLuint* texNum)
   checkReleaseError("Could not initialize texture from file: " + fileName);
 
   return true;
+}
+
+float getSquareWidthForHeightInLayout(float height, WLayout* layout)
+{
+  return height / (layout->getWidth()/layout->getHeight() * (float)Renderer::getInstance().getWidth() / (float)Renderer::getInstance().getHeight());
 }

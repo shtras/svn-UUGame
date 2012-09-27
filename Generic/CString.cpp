@@ -50,6 +50,24 @@ CString::CString(int val)
   //str_ = ss.str();
 }
 
+CString::CString(int val, int minLen)
+{
+  int origval = val;
+  int len = (val > 0)? 0:1;
+  while (val != 0) {
+    val /= 10;
+    len++;
+  }
+  if (len < minLen) {
+    len = minLen;
+  }
+  cont_ = new char[len+1];
+  CString format = "%0" + CString(minLen) + "d";
+  sprintf(cont_, format, origval);
+  //_itoa(origval, cont_, 10);
+  len_ = len;
+}
+
 CString::CString(float val)
 {
   assert(0);

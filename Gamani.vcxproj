@@ -82,7 +82,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;WIN32;_DEBUG;_WINDOWS;DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <OpenMPSupport>false</OpenMPSupport>
-      <AdditionalIncludeDirectories>.;Objects;Math;Generic;Ship;ADP/Compiler</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;Objects;Math;Generic;Ship;Crew;GUI;GUI/Forms</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -136,7 +136,7 @@
       <EnableFiberSafeOptimizations>true</EnableFiberSafeOptimizations>
       <OpenMPSupport>false</OpenMPSupport>
       <WholeProgramOptimization>true</WholeProgramOptimization>
-      <AdditionalIncludeDirectories>.;Objects;Math;Generic;Ship;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;Objects;Math;Generic;Ship;Crew;GUI;GUI/Forms</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <StructMemberAlignment>Default</StructMemberAlignment>
@@ -203,6 +203,23 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="auxFuncs.cpp" />
+    <ClCompile Include="Crew\Person.cpp" />
+    <ClCompile Include="GUI\Forms\CrewPanel.cpp" />
+    <ClCompile Include="GUI\Forms\GeneralInfo.cpp" />
+    <ClCompile Include="GUI\Forms\PersonInfoFloating.cpp" />
+    <ClCompile Include="GUI\Forms\RoomCrewAssignment.cpp" />
+    <ClCompile Include="GUI\Forms\RoomInfo.cpp" />
+    <ClCompile Include="GUI\Forms\RoomPanel.cpp" />
+    <ClCompile Include="GUI\Forms\TestDragDrop.cpp" />
+    <ClCompile Include="GUI\GUIRenderer.cpp" />
+    <ClCompile Include="GUI\LayoutManager.cpp" />
+    <ClCompile Include="GUI\WImage.cpp" />
+    <ClCompile Include="GUI\WTabbedLayout.cpp" />
+    <ClCompile Include="GUI\WButton.cpp" />
+    <ClCompile Include="GUI\Widget.cpp" />
+    <ClCompile Include="GUI\WInput.cpp" />
+    <ClCompile Include="GUI\WLayout.cpp" />
+    <ClCompile Include="GUI\WText.cpp" />
     <ClCompile Include="Ship\Ship.cpp" />
     <ClCompile Include="UUGame.cpp" />
     <ClCompile Include="Generic\CString.cpp" />
@@ -219,7 +236,26 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="auxFuncs.h" />
+    <ClInclude Include="Crew\Person.h" />
+    <ClInclude Include="GUI\Forms\CrewPanel.h" />
+    <ClInclude Include="GUI\Forms\GeneralInfo.h" />
+    <ClInclude Include="GUI\Forms\PersonInfoFloating.h" />
+    <ClInclude Include="GUI\Forms\RoomCrewAssingment.h" />
+    <ClInclude Include="GUI\Forms\RoomInfo.h" />
+    <ClInclude Include="GUI\Forms\RoomPanel.h" />
+    <ClInclude Include="GUI\Forms\TestDragDrop.h" />
+    <ClInclude Include="GUI\GUIRenderer.h" />
+    <ClInclude Include="GUI\LayoutManager.h" />
+    <ClInclude Include="GUI\WImage.h" />
+    <ClInclude Include="GUI\WTabbedLayout.h" />
+    <ClInclude Include="GUI\WButton.h" />
+    <ClInclude Include="GUI\Widget.h" />
+    <ClInclude Include="GUI\Widgets.h" />
+    <ClInclude Include="GUI\WInput.h" />
+    <ClInclude Include="GUI\WLayout.h" />
+    <ClInclude Include="GUI\WText.h" />
     <ClInclude Include="Ship\Ship.h" />
+    <ClInclude Include="sigslot.h" />
     <ClInclude Include="UUGame.h" />
     <ClInclude Include="Generic\CString.h" />
     <ClInclude Include="Logger.h" />

@@ -8,7 +8,11 @@
 #include <stdlib.h>
 #include <crtdbg.h>
 #endif //DEBUG
-#include "Ship.h"
+#include "RoomInfo.h"
+#include "GUI\Forms\RoomPanel.h"
+#include "GUI\Forms\TestDragDrop.h"
+#include "GUI\WImage.h"
+#include "GUI\Forms\CrewPanel.h"
 
 const char* Version = "0.1.0";
 
@@ -38,12 +42,13 @@ void toggleVSync()
 }
 
 UUGame::UUGame(): paused_(true), speed_(1), calcStepLength_(0.05), dtModifier_(50),lmDown_(false),rmDown_(false),
-  lmDrag_(false), rmDrag_(false), shiftPressed_(false)
+  lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL)
 {
+  nonContKeys_.insert(' ');
+  nonContKeys_.insert(VK_ADD);
+  nonContKeys_.insert(VK_SUBTRACT);
   version_ = CString(Version) + "." + CString(BUILD_NUM) + " " + CString(BUILDSTR);
 }
-
-
 
 UUGame::~UUGame()
 {
@@ -59,6 +64,7 @@ bool UUGame::init(HINSTANCE& hIhstance)
 {
   Renderer& renderer = Renderer::getInstance();
   renderer.init(hIhstance);
+  layoutManager_.setRenderer(new GUIRenderer());
   return true;
 }
 
@@ -76,7 +82,7 @@ bool UUGame::mainLoop()
   double accumKeys = 0.0f;
   double dtKeys = 1;
 
-  seconds_ = 0;
+  time_ = 0;
 
   int snapshotTimer = 0;
   MSG msg={0};
@@ -84,9 +90,31 @@ bool UUGame::mainLoop()
   double delta = 0;
   int cntToPause = 0;
 
-  Ship* ship = new Ship();
-  ship->testInit();
-  Renderer::getInstance().setCurrentShip(ship);
+  ship_ = new Ship();
+  ship_->testInit();
+  Renderer::getInstance().setCurrentShip(ship_);
+
+  RoomInfo* roomInfo = new RoomInfo();
+  roomInfo->init();
+  layoutManager_.addLayout(roomInfo);
+
+  ship_->setRoomInfo(roomInfo);
+
+  generalInfo_ = new GeneralInfo();
+  generalInfo_->init();
+  layoutManager_.addLayout(generalInfo_);
+
+  {
+    RoomPanel* panel = new RoomPanel(&layoutManager_, ship_);
+    panel->init();
+    layoutManager_.addLayout(panel);
+  }
+
+  {
+    CrewPanel* crewPanel = new CrewPanel(ship_);
+    crewPanel->init();
+    layoutManager_.addLayout(crewPanel);
+  }
 
   while(WM_QUIT!=msg.message) {
     if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
@@ -121,17 +149,20 @@ bool UUGame::mainLoop()
 
       dt *= dtModifier_;
       if (accumulator < dt) {
-        Sleep(5);
+        Sleep(10);
       }
       while(accumulator >= dt) {
         if (!paused_) {
           for (int i=0; i<speed_; ++i) {
-            seconds_ += calcStepLength_*dt * (100/dtModifier_);
+            time_ += calcStepLength_*dt * (1/dtModifier_);
+            Time::getTime().increase(100);
             handlePressedKeys();
+            ship_->timeStep();
           }
         }
         accumulator -= dt;
       }
+      generalInfo_->update();
 
       if (time - timebase > 1000) {
         double fps = frame*1000.0/(time-timebase);
@@ -143,22 +174,26 @@ bool UUGame::mainLoop()
       }
 
       Renderer::getInstance().render();
-
+      layoutManager_.render();
       Renderer::getInstance().renderEnd();
       checkReleaseError("Main cycle OpenGL error");
     }
   }
-#ifdef MULTITHREAD_RUN
-  StopThread = true;
-  CloseHandle(ghWriteEvent);
-#endif
   return true;
-
 }
 
 void UUGame::handlePressedKey(int key)
 {
   switch (key) {
+  case ' ':
+    paused_ = !paused_;
+    break;
+  case VK_ADD:
+    ship_->increaseSize();
+    break;
+  case VK_SUBTRACT:
+    ship_->decreaseSize();
+    break;
   default:
     break;
   }
@@ -188,6 +223,14 @@ void UUGame::handleMessage(UINT message, WPARAM wParam, LPARAM lParam)
   //  return;
   //}
   switch (message) {
+  case WM_LBUTTONDOWN:
+    layoutManager_.handleMessage(message, wParam, lParam);
+    break;
+  case WM_LBUTTONUP:
+    layoutManager_.handleMessage(message, wParam, lParam);
+    layoutManager_.clearDraggedWidget();
+    handleMouseEvent(message, wParam, lParam);
+    break;
   case WM_KEYDOWN:
     if (wParam == 0x10) {
       shiftPressed_ = true;
@@ -207,6 +250,10 @@ void UUGame::handleMessage(UINT message, WPARAM wParam, LPARAM lParam)
       handlePressedKey(wParam);
     }
     pressedKeys_.erase(wParam);
+    break;
+  case WM_MOUSEMOVE:
+    layoutManager_.handleMessage(message, wParam, lParam);
+    handleMouseEvent(message, wParam, lParam);
     break;
   case WM_SIZE:
     Renderer::getInstance().resize(LOWORD(lParam), HIWORD(lParam));
@@ -246,6 +293,21 @@ bool UUGame::run()
   return true;
 }
 
+void UUGame::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam )
+{
+  if (!ship_) {
+    return;
+  }
+  int x = GET_X_LPARAM(lParam);
+  int y = GET_Y_LPARAM(lParam);
+  if (!Renderer::getInstance().isWithinShipRenderArea(x, y)) {
+    return;
+  }
+  float fx = x / (float)Renderer::getInstance().getWidth();
+  float fy = y / (float)Renderer::getInstance().getHeight();
+  ship_->handleMouseEvent(message, fx, fy);
+}
+
 int body(HINSTANCE& hInstance, HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int& nShowCmd)
 {
   UUGame& inst = UUGame::getInstance();
@@ -258,44 +320,6 @@ int body(HINSTANCE& hInstance, HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int& 
     return 1;
   }
   return 0;
-}
-
-int char2bin(char* str, int start, int end)
-{
-  int res = 0;
-  for (int i=start; i<end; ++i) {
-    char c = str[i];
-    if (c == '0') {
-    } else if (c == '1') {
-      res++;
-    }
-    if (i != end-1) {
-      res <<= 1;
-    }
-  }
-  return res;
-}
-
-double log2(double a)
-{
-  return log(a)/log(2.0);
-}
-
-char* tobinaryfrac(double number)
-{
-  char* res = new char[53];
-  double curr = number;
-  for (int i=0; i<52; ++i) {
-    curr *= 2.0;
-    if (curr >= 1) {
-      res[i] = '1';
-      curr -= 1.0;
-    } else {
-      res[i] = '0';
-    }
-  }
-  res[52] = 0;
-  return res;
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd)
@@ -328,3 +352,49 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   return res;
 }
 
+
+Time& Time::getTime()
+{
+  static Time time;
+  return time;
+}
+
+Time::Time()
+{
+  year_ = 2137;
+  month_ = 7;
+  day_ = 14;
+  hour_ = 5;
+  minute_ = 30;
+  second_ = 0;
+}
+
+Time::~Time()
+{
+
+}
+
+void Time::increase( int seconds )
+{
+  second_ += seconds;
+  while (second_ >= 60) {
+    second_ -= 60;
+    ++minute_;
+  }
+  while (minute_ >= 60) {
+    minute_ -= 60;
+    ++hour_;
+  }
+  while (hour_ >= 24) {
+    hour_ -= 24;
+    ++day_;
+  }
+  while (day_ > 31) {
+    day_ -= 31;
+    ++month_;
+  }
+  while (month_ > 12) {
+    month_ -= 12;
+    ++year_;
+  }
+}

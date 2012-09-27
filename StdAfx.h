@@ -2,6 +2,7 @@
 
 //#include "VersionInfo.h"
 #include <Windows.h>
+#include "sigslot.h"
 #include <assert.h>
 #include <iostream>
 #include <stdio.h>
@@ -40,6 +41,7 @@
 #define PI (3.14159265)
 
 using namespace std;
+using namespace sigslot;
 
 typedef unsigned int uint32_t;
 

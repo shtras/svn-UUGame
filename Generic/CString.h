@@ -11,6 +11,7 @@ public:
   CString(const char* str);
   CString(char c);
   CString(int val);
+  CString(int val, int minLen);
   CString(float val);
   CString(double val);
   CString(double val, int len);
