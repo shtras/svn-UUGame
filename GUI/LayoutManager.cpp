@@ -67,10 +67,14 @@ void LayoutManager::render()
     layout->setHoveredWidgetCalling(hoveredWidget_);
     glDisable(GL_DEPTH_TEST);
     float x = mouseX_;
+    float y = mouseY_;
     if (x + layout->getWidth() > 1) {
       x -= layout->getWidth();
     }
-    Renderer::getInstance().requestViewPort(x, (1 - mouseY_), layout->getWidth(), layout->getHeight(), false, false);
+    if (y + layout->getHeight() > 1) {
+      y -= layout->getHeight();
+    }
+    Renderer::getInstance().requestViewPort(x, (1 - y), layout->getWidth(), layout->getHeight(), false, false);
     glMatrixMode(GL_PROJECTION);
     glPushMatrix();
     glLoadIdentity();
@@ -148,6 +152,12 @@ bool LayoutManager::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam)
             focusOn_ = res;
           }
           result = true;
+        }
+        if (message == WM_LBUTTONUP && (!res || !res->getsDrop()) && layout->getsDrop()) {
+          layout->onDrop(draggedWidget_);
+        }
+        if (message == WM_LBUTTONUP) {
+          draggedWidget_ = NULL;
         }
       } else {
         layout->setHovered(false);

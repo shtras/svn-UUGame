@@ -11,8 +11,7 @@ public:
   RoomInfo();
   ~RoomInfo();
   void init();
-  void render(bool setDimensions = true);
-  void setRoom(Room* room) {selectedRoom_ = room;}
+  void setRoom(Room* room);
 private:
   WText* roomName_;
   Room* selectedRoom_;

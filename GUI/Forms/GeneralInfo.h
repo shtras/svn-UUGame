@@ -11,4 +11,5 @@ public:
   void update();
 private:
   WText* timeText_;
+  WText* shiftText_;
 };

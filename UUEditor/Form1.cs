@@ -41,6 +41,20 @@ namespace UUEditor
         public Form1()
         {
             InitializeComponent();
+            wall_h = Bitmap.FromFile("wall_h.bmp");
+            door_h = Bitmap.FromFile("door_h.bmp");
+            blastDoor_h = Bitmap.FromFile("blastdoor_h.bmp");
+
+            wall_v = Bitmap.FromFile("wall_v.bmp");
+            door_v = Bitmap.FromFile("door_v.bmp");
+            blastDoor_v = Bitmap.FromFile("blastdoor_v.bmp");
+            initializeRadioButtons();
+            currentTileBox.AllowDrop = true;
+            currentTileBox.DragDrop += new DragEventHandler(pictureBox_DragDrop);
+            currentTileBox.DragEnter += new DragEventHandler(pictureBox_DragEnter);
+            resizeRoom();
+            selectedTile = tiles[0, 0];
+            selectTile(selectedTile);
         }
 
         TileInfo.WallType getWallType(RadioButton button)
@@ -156,20 +170,7 @@ namespace UUEditor
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            wall_h = Bitmap.FromFile("wall_h.bmp");
-            door_h = Bitmap.FromFile("door_h.bmp");
-            blastDoor_h = Bitmap.FromFile("blastdoor_h.bmp");
 
-            wall_v = Bitmap.FromFile("wall_v.bmp");
-            door_v = Bitmap.FromFile("door_v.bmp");
-            blastDoor_v = Bitmap.FromFile("blastdoor_v.bmp");
-            initializeRadioButtons();
-            currentTileBox.AllowDrop = true;
-            currentTileBox.DragDrop += new DragEventHandler(pictureBox_DragDrop);
-            currentTileBox.DragEnter += new DragEventHandler(pictureBox_DragEnter);
-            resizeRoom();
-            selectedTile = tiles[0, 0];
-            selectTile(selectedTile);
         }
 
         private void clearTiles()

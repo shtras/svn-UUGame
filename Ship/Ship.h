@@ -1,5 +1,7 @@
 #pragma once
 #include "RoomInfo.h"
+#include "PersonInfoFloating.h"
+#include "TileInfo.h"
 
 class Person;
 class TileLayout;
@@ -8,6 +10,23 @@ class Tile;
 class Room
 {
 public:
+  class Item
+  {
+  public:
+    Item(CString name, int x, int y, int capacity);
+    ~Item();
+    int getCapacity() {return capacity_;}
+    int getX() {return x_;}
+    int getY() {return y_;}
+    set<Person*>* getUsing(int shift) {return using_[shift-1];}
+    CString getName() {return name_;}
+  private:
+    CString name_;
+    int x_;
+    int y_;
+    int capacity_;
+    set<Person*>** using_;
+  };
   enum RoomType {Living, Working, Other, BadType};
   Room(CString name, int left, int top, int width, int height, RoomType type);
   virtual ~Room();
@@ -24,8 +43,13 @@ public:
   void removePerson(Person* person);
   RoomType getType() {return type_;}
   int getCapacity() {return capacity_;}
-  void setCapacity(int value) {capacity_ = value;}
+  void assignPerson(Person* pers);
+  void detachPerson(Person* pers);
+  void addItem(Item* item);
+  const list<Item*>& getItems() {return items_;}
 protected:
+  Room::Item* assignPersonForShift(Person* pers, int shift);
+  void detachPersonForShift(Person* pers, int shift);
   int top_;
   int left_;
   int width_;
@@ -35,6 +59,7 @@ protected:
   set<Tile*> tiles_;
   set<Person*> crewInRoom_;
   int capacity_;
+  list<Item*> items_;
 };
 
 class Tile
@@ -71,6 +96,7 @@ public:
   float getTileHeight() {return tileHeight_;}
   void handleMouseEvent(UINT message, float x, float y);
   void setRoomInfo(RoomInfo* roomInfo) {roomInfo_ = roomInfo;}
+  void setTileInfo(TileInfo* tileInfo) {tileInfo_ = tileInfo;}
   void addCrewMember(Person* person);
   void increaseSize();
   void decreaseSize();
@@ -78,6 +104,9 @@ public:
   void timeStep();
   const list<Person*>& getCrew() {return crew_;}
   list<Room*> getRoomsByType(Room::RoomType type);
+  list<Person*> getAssignedCrew(Room* room, int shift = -1);
+  PersonInfoFloating* getPersFloatingInfo() {return floatingInfo_;}
+  int getCrewCapacity() {return crewCapacity_;}
 private:
   void drawWalls();
   void drawVerticalWall(Tile::WallType type);
@@ -93,6 +122,7 @@ private:
   GLfloat tileHeight_;
 
   RoomInfo* roomInfo_;
+  TileInfo* tileInfo_;
   Room* hoveredRoom_;
   Tile* hoveredTile_;
 
@@ -103,6 +133,8 @@ private:
   int tileSize_;
   int shift_;
   int redShift_;
+  PersonInfoFloating* floatingInfo_;
+  int crewCapacity_;
 };
 
 class LivingRoom: public Room

@@ -45,6 +45,12 @@
     <Filter Include="Source Files\GUI\Forms">
       <UniqueIdentifier>{0a0b5f7a-361b-4525-a2f4-cdce25240333}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Universe">
+      <UniqueIdentifier>{a884e39a-4b5a-4052-9fd6-0fdfd0ab34bd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Universe">
+      <UniqueIdentifier>{dbcdb0e5-3e45-4b1f-976c-f1fc43bd172e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Renderer.cpp">
@@ -124,6 +130,24 @@
     </ClCompile>
     <ClCompile Include="GUI\Forms\RoomCrewAssignment.cpp">
       <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\TileInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\HoverInfoPanel.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\WTextBox.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\Controls.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\ShipInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\StarSystem.cpp">
+      <Filter>Source Files\Universe</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -213,6 +237,24 @@
     </ClInclude>
     <ClInclude Include="GUI\Forms\RoomCrewAssingment.h">
       <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\TileInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\HoverInfoPanel.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\WTextBox.h">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\Controls.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\ShipInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\StarSystem.h">
+      <Filter>Header Files\Universe</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

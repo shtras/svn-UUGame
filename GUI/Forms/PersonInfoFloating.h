@@ -11,4 +11,7 @@ public:
   virtual void setHoveredWidgetCalling(Widget* widget);
 private:
   WText* nameText_;
+  WText* livingText_;
+  WText* workingText_;
+  WText* shiftText_;
 };

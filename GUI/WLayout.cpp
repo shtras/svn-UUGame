@@ -5,7 +5,7 @@
 WLayout::WLayout(int left, int top, int width, int height):
   top_(top), left_(left), height_(height), width_(width), visible_(false), square_(false), rightAlign_(false),
   maxTop_(top),maxLeft_(left),maxHeght_(height),maxWidth_(width),minimized_(false),bottom_(false),hovered_(false),
-  hoveredWidgetCalling_(NULL)
+  hoveredWidgetCalling_(NULL),getsDrop_(false)
 {
 
 }
@@ -21,9 +21,9 @@ WLayout::~WLayout()
 
 void WLayout::render(bool setDimensions/* = true*/)
 {
-  Vector4 color = Vector4(0.2, 0.12, 0.45, 0.7);
+  Vector4 color = Vector4(0.05, 0.07, 0.64, 0.7);
   if (isHovered()) {
-    color = Vector4(0.22, 0.15, 0.47, 0.72);
+    color = Vector4(color[0]+0.02, color[1]+0.02, color[2]+0.02, color[3]+0.02);
   }
   assert(width_ > 0 && height_ > 0);
   if (setDimensions) {
@@ -49,7 +49,7 @@ void WLayout::render(bool setDimensions/* = true*/)
   glVertex3f(-1, 1, 0.1);
   glEnd();
 
-  glColor3f(0.1, 0.05, 0.4);
+  glColor3f(0.07, 0.25, 0.23);
   glBegin(GL_LINE_LOOP);
   glVertex3f(-1, -1, 0);
   glVertex3f(1, -1, 0);
@@ -173,9 +173,9 @@ Widget* WLayout::handleMouseEvent(UINT message, WPARAM wparam, double x, double 
       widget->setHovered(false);
     }
   }
-  if (message == WM_LBUTTONUP) {
-    draggedWidget = NULL;
-  }
+  //if (message == WM_LBUTTONUP) {
+  //  draggedWidget = NULL;
+  //}
   return res;
 }
 

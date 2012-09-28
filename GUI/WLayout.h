@@ -25,12 +25,15 @@ public:
   bool isVisible() {return visible_;}
   bool isSquare() {return square_;}
   bool isRightAlign() {return rightAlign_;}
-  void setVisible(bool value) {visible_ = value;}
+  virtual void setVisible(bool value) {visible_ = value;}
   void setRightAlign(bool value) {rightAlign_ = value;}
   void setBottom(bool value) {bottom_ = value;}
   bool isHovered() {return hovered_;}
   void setHovered(bool val);
   virtual void setHoveredWidgetCalling(Widget* widget) {}
+  void setGetsDrop(bool value) {getsDrop_ = value;}
+  bool getsDrop() {return getsDrop_;}
+  virtual void onDrop(Widget* widget) {}
 protected:
   list<Widget*> widgets_;
   list<Widget*> widgetsToGC_;
@@ -49,6 +52,7 @@ protected:
   bool bottom_;
   bool hovered_;
   Widget* hoveredWidgetCalling_;
+  bool getsDrop_;
 private:
 };
 

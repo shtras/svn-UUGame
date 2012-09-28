@@ -16,9 +16,9 @@ public:
   HWND& getHwnd() {return hWnd_;}
   int getWidth() {return width_;}
   int getHeight() {return height_;}
-  void textOutNoMove(double x, double y, double z, const char* format, ...);
+  void textOutNoMove(double x, double y, double z, bool center, const char* format, ...);
 
-  void textOut(double x, double y, double z, char* format, ...);
+  void textOut(double x, double y, double z, bool center, char* format, ...);
   void requestViewPort(double left, double top, double width, double height, bool square = false, bool rightAlign = false);
   void resetViewPort();
   CString formatDistance (double dist, int len = 4);
@@ -50,4 +50,6 @@ private:
   Ship* currentShip_;
   float shipAreaX_;
   float shipAreaY_;
+  int viewPortWidth_;
+  int viewPortHeight_;
 };

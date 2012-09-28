@@ -3,7 +3,7 @@
 #include "Renderer.h"
 
 
-Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.2), shipAreaY_(0.3)
+Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.25), shipAreaY_(0.35), viewPortWidth_(0), viewPortHeight_(0)
 {
 }
 
@@ -265,9 +265,11 @@ void Renderer::requestViewPort(double left, double top, double width, double hei
     x = actualLeft;
     y = height_*(top-height);
     w = width_*width;
-    h =height_*height;
+    h = height_*height;
   }
   glViewport(x, y, w, h);
+  viewPortWidth_ = w;
+  viewPortHeight_ = h;
   customViewPort_ = true;
 }
 
@@ -275,12 +277,14 @@ void Renderer::resetViewPort()
 {
   glViewport(0, 0, width_, height_);
   customViewPort_ = false;
+  viewPortWidth_ = width_;
+  viewPortHeight_ = height_;
 }
 
 GLvoid *font_style = GLUT_BITMAP_8_BY_13;
 //GLvoid *font_style = GLUT_BITMAP_HELVETICA_12;
 
-void Renderer::textOutNoMove(double x, double y, double z, const char* format, ...)
+void Renderer::textOutNoMove(double x, double y, double z, bool center, const char* format, ...)
 {
   va_list args;   //  Variable argument list
   int len;        // String length
@@ -307,7 +311,7 @@ void Renderer::textOutNoMove(double x, double y, double z, const char* format, .
   glEnable(GL_LIGHTING);
 }
 
-void Renderer::textOut(double x, double y, double z, char* format, ...)
+void Renderer::textOut(double x, double y, double z, bool center, char* format, ...)
 {
   va_list args;   //  Variable argument list
   int len;        // String length
@@ -327,6 +331,14 @@ void Renderer::textOut(double x, double y, double z, char* format, ...)
   glPushMatrix();
   glLoadIdentity();
   glTranslatef(x,y,z-0.1);
+  if (center) {
+    int width = (customViewPort_)?viewPortWidth_:width_;
+    int height = (customViewPort_)?viewPortHeight_:height_;
+    int textSize = strlen(text) * 8;
+    float dx = textSize / (float)width;
+    float dy = 13 / (float)height/2.0;
+    glTranslatef(-dx, -dy, 0);
+  }
   glColor3f(1,1,1);
   glRasterPos3f (0, 0, 0);
   for (i = 0; text[i] != '\0'; i++) {
@@ -462,14 +474,12 @@ void Renderer::initImages()
     Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/bg.bmp");
   }
 
-  res = loadBMP("res/face.bmp", &images_[1]);
-  if (!res) {
-    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/face.bmp");
-  }
-
-  res = loadBMP("res/star.bmp", &images_[2]);
-  if (!res) {
-    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/star.bmp");
+  for (int i=1; i<=9; ++i) {
+    CString name = "res/face" + CString(i) + ".bmp";
+    bool res = loadBMP(name, &images_[i]);
+    if (!res) {
+      Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load " + name);
+    }
   }
 }
 

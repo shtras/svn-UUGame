@@ -4,7 +4,7 @@
 #include "Person.h"
 #include "..\UUGame.h"
 
-Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false)
+Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0)
 {
   shift_ = 1;
   redShift_ = 2;
@@ -12,6 +12,9 @@ Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
   tileHeight_ = tileWidth_ * Renderer::getInstance().getAspectRatio();
+
+  floatingInfo_ = new PersonInfoFloating();
+  floatingInfo_->init();
 }
 
 Ship::~Ship()
@@ -23,6 +26,7 @@ void Ship::testInit1()
 {
   loadFromFile("stark.rrm");
   Room* room = NULL;
+  Room::Item* item = NULL;
 
   room = new OtherRoom("Escape pod 4", 0, 2, 2, 2);
   addRoom(room);
@@ -37,15 +41,23 @@ void Ship::testInit1()
   addRoom(room);
 
   room = new WorkingRoom("Laser deck 1", 2, 15, 2, 2);
+  item = new Room::Item("Console", 0, 1, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new WorkingRoom("Laser deck 2", 2, 0, 2, 2);
+  item = new Room::Item("Console", 0, 0, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new WorkingRoom("Laser deck 3", 12, 15, 2, 2);
+  item = new Room::Item("Console", 0, 1, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new WorkingRoom("Laser deck 4", 12, 0, 2, 2);
+  item = new Room::Item("Console", 0, 0, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new LivingRoom("1st officer quarters", 2, 11, 2, 3);
@@ -61,6 +73,10 @@ void Ship::testInit1()
   addRoom(room);
 
   room = new WorkingRoom("Electronics", 2, 7, 3, 3);
+  item = new Room::Item("Console", 0, 0, 1);
+  room->addItem(item);
+  item = new Room::Item("Console", 0, 2, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new WorkingRoom("Bridge", 5, 7, 3, 3);
@@ -72,8 +88,30 @@ void Ship::testInit1()
   room = new OtherRoom("Ready room", 11, 7, 2, 3);
   addRoom(room);
 
-  room = new LivingRoom("Crew quarters", 2, 3, 6, 3);
-  addRoom(room);
+  Room* crewQuarters = new LivingRoom("Crew quarters", 2, 3, 6, 3);
+  item = new Room::Item("Bed", 0, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 1, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 2, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 4, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 5, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 0, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 1, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 2, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 3, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 4, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 5, 0, 2);
+  crewQuarters->addItem(item);
+  addRoom(crewQuarters);
 
   room = new WorkingRoom("Medic", 8, 3, 2, 3);
   addRoom(room);
@@ -81,10 +119,18 @@ void Ship::testInit1()
   room = new OtherRoom("Storage", 10, 3, 3, 3);
   addRoom(room);
 
-  room = new WorkingRoom("Engine 1 control", 14, 12, 3, 3);
+  room = new WorkingRoom("Engine1 control", 14, 12, 3, 3);
+  item = new Room::Item("Console", 0, 1, 1);
+  room->addItem(item);
+  item = new Room::Item("Console", 0, 2, 1);
+  room->addItem(item);
   addRoom(room);
 
-  room = new WorkingRoom("Engine 2 control", 14, 2, 3, 3);
+  room = new WorkingRoom("Engine2 control", 14, 2, 3, 3);
+  item = new Room::Item("Console", 0, 0, 1);
+  room->addItem(item);
+  item = new Room::Item("Console", 0, 1, 1);
+  room->addItem(item);
   addRoom(room);
 
   room = new OtherRoom("Reactor", 15, 6, 2, 5);
@@ -95,27 +141,163 @@ void Ship::testInit1()
 
   room = new OtherRoom("Engine 2", 15, 0, 4, 2);
   addRoom(room);
+
+  Person* pers = NULL;
+  pers = new Person();
+  pers->name_ = "Ivan The Terrible";
+  pers->x_ = 7; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(1);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Peter The First";
+  pers->x_ = 8; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(2);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Winston Churchill";
+  pers->x_ = 2; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(6);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "George Washington";
+  pers->x_ = 3; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(7);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Nicola Tesla";
+  pers->x_ = 4; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(3);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Ivan Kulibin";
+  pers->x_ = 5; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(4);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Vasily Pupkin";
+  pers->x_ = 6; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(5);
+  addCrewMember(pers);
+
+  //////////////////////////////////////////////////////////////////////////
+  pers = new Person();
+  pers->name_ = "Vladimir Putin";
+  pers->x_ = 7; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(1);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Dmitry Medvedev";
+  pers->x_ = 8; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(2);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Michael Jackson";
+  pers->x_ = 2; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(6);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Eddy Murphy";
+  pers->x_ = 3; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(7);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Isaac Newton";
+  pers->x_ = 4; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(3);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Bill Gates";
+  pers->x_ = 5; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(4);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Vitaly Petrov";
+  pers->x_ = 6; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(5);
+  addCrewMember(pers);
+
+  //////////////////////////////////////////////////////////////////////////
+  pers = new Person();
+  pers->name_ = "Dmitry Mendeleev";
+  pers->x_ = 7; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(1);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Filipp Kirkorov";
+  pers->x_ = 8; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(2);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Maxim Perepelitsa";
+  pers->x_ = 2; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(6);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Ivan Brovkin";
+  pers->x_ = 3; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(7);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Moshe Klausner";
+  pers->x_ = 4; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(3);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Mark Fertman";
+  pers->x_ = 5; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(4);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Mark Webber";
+  pers->x_ = 6; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(5);
+  addCrewMember(pers);
 }
 
 void Ship::testInit()
 {
   loadFromFile("scout.rrm");
   Room* room = NULL;
+  Room::Item* item = NULL;
   
   Room* weaponRoom = new WorkingRoom("Weapons control", 0, 2, 2, 3);
-  weaponRoom->setCapacity(2);
+  item = new Room::Item("Console", 0, 2, 1);
+  weaponRoom->addItem(item);
   addRoom(weaponRoom);
 
   Room* electonicsRoom = new WorkingRoom("Electronics", 2, 2, 2, 3);
-  electonicsRoom->setCapacity(2);
+  item = new Room::Item("Console", 0, 0, 1);
+  electonicsRoom->addItem(item);
+  item = new Room::Item("Console", 0, 2, 1);
+  electonicsRoom->addItem(item);
   addRoom(electonicsRoom);
 
   Room* officerQuarters = new LivingRoom("Officer quarters", 4, 2, 2, 3);
-  officerQuarters->setCapacity(4);
+  item = new Room::Item("Bed", 0, 2, 1);
+  officerQuarters->addItem(item);
+  item = new Room::Item("Bed", 1, 2, 1);
+  officerQuarters->addItem(item);
   addRoom(officerQuarters);
 
   Room* bridge = new WorkingRoom("Bridge", 6, 2, 2, 3);
-  bridge->setCapacity(2);
   addRoom(bridge);
 
   room = new OtherRoom("Mess hall", 8, 3, 2, 2);
@@ -125,11 +307,19 @@ void Ship::testInit()
   addRoom(room);
 
   Room* crewQuarters = new LivingRoom("Crew quarters", 10, 2, 2, 3);
-  crewQuarters->setCapacity(8);
+  item = new Room::Item("Bed", 0, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 1, 2, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 0, 0, 2);
+  crewQuarters->addItem(item);
+  item = new Room::Item("Bed", 1, 0, 2);
+  crewQuarters->addItem(item);
   addRoom(crewQuarters);
 
   Room* engineControl = new WorkingRoom("Engine control", 12, 5, 1, 2);
-  engineControl->setCapacity(2);
+  item = new Room::Item("Console", 0, 1, 1);
+  engineControl->addItem(item);
   addRoom(engineControl);
 
   room = new OtherRoom("Engine 2", 13, 0, 2, 2);
@@ -146,30 +336,44 @@ void Ship::testInit()
   Person* pers = NULL;
   pers = new Person();
   pers->name_ = "Ivan The Terrible";
-  pers->x_ = 4; pers->y_ = 4; pers->officer_ = true; pers->living_ = officerQuarters; pers->shiftRoom_ = bridge; pers->workByShifts_ = false;
+  pers->x_ = 0; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(1);
   addCrewMember(pers);
 
   pers = new Person();
   pers->name_ = "Peter The First";
-  pers->x_ = 5; pers->y_ = 4; pers->officer_ = true; pers->living_ = officerQuarters; pers->shiftRoom_ = bridge; pers->workByShifts_ = false;
+  pers->x_ = 1; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(2);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "Winston Churchill";
+  pers->x_ = 2; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(6);
+  addCrewMember(pers);
+
+  pers = new Person();
+  pers->name_ = "George Washington";
+  pers->x_ = 3; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(7);
   addCrewMember(pers);
 
   pers = new Person();
   pers->name_ = "Nicola Tesla";
-  pers->x_ = 10; pers->y_ = 2; pers->officer_ = false; pers->living_ = crewQuarters; pers->shiftRoom_ = electonicsRoom; pers->redShiftRoom_ = weaponRoom; pers->workByShifts_ = true;
-  pers->shift_ = 1;
+  pers->x_ = 4; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(3);
   addCrewMember(pers);
 
   pers = new Person();
   pers->name_ = "Ivan Kulibin";
-  pers->x_ = 11; pers->y_ = 2; pers->officer_ = false; pers->living_ = crewQuarters; pers->shiftRoom_ = electonicsRoom; pers->redShiftRoom_ = weaponRoom; pers->workByShifts_ = true;
-  pers->shift_ = 2;
+  pers->x_ = 5; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(4);
   addCrewMember(pers);
 
   pers = new Person();
   pers->name_ = "Vasily Pupkin";
-  pers->x_ = 11; pers->y_ = 4; pers->officer_ = false; pers->living_ = crewQuarters; pers->shiftRoom_ = electonicsRoom; pers->redShiftRoom_ = weaponRoom; pers->workByShifts_ = true;
-  pers->shift_ = 3;
+  pers->x_ = 6; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
+  pers->faceTexID_ = Renderer::getInstance().getImage(5);
   addCrewMember(pers);
 }
 
@@ -452,6 +656,9 @@ void Ship::addRoom(Room* room)
     }
   }
   rooms_.push_front(room);
+  if (room->getType() == Room::Living) {
+    crewCapacity_ += room->getCapacity();
+  }
 }
 
 void Ship::handleMouseEvent(UINT message, float x, float y)
@@ -462,6 +669,7 @@ void Ship::handleMouseEvent(UINT message, float x, float y)
     hoveredRoom_ = NULL;
     hoveredTile_ = NULL;
     roomInfo_->setRoom(NULL);
+    tileInfo_->setTile(NULL);
     return;
   }
   Tile* tile = layout_->getTile(tileX, tileY);
@@ -470,6 +678,7 @@ void Ship::handleMouseEvent(UINT message, float x, float y)
       hoveredRoom_ = tile->getRoom();
       roomInfo_->setRoom(hoveredRoom_);
       hoveredTile_ = tile;
+      tileInfo_->setTile(hoveredTile_);
       //debugPath_ = layout_->findPath(fromTile_, tile);
       //if (debugPath_.size() > 0) {
       //  drawDebugPath_ = true;
@@ -480,12 +689,14 @@ void Ship::handleMouseEvent(UINT message, float x, float y)
       hoveredRoom_ = NULL;
       hoveredTile_ = NULL;
       roomInfo_->setRoom(NULL);
+      tileInfo_->setTile(NULL);
     }
   } else if (message == WM_LBUTTONUP) {
     if (tile) {
       fromTile_ = tile;
     }
   }
+
 }
 
 void Ship::addCrewMember( Person* person )
@@ -522,18 +733,21 @@ void Ship::timeStep()
 {
   Time& time = Time::getTime();
   int hour = time.getHour();
-  if (hour >= 0 && hour < 8) {
-    shift_ = 1;
-    redShift_ = 2;
-  } else if (hour >= 8 && hour < 16) {
-    shift_ = 2;
-    redShift_ = 3;
-  } else if (hour >= 16 && hour < 24) {
-    shift_ = 3;
-    redShift_ = 1;
-  } else {
-    assert(0);
-  }
+
+  //if (hour >= 0 && hour < 8) {
+  //  shift_ = 1;
+  //  redShift_ = 2;
+  //} else if (hour >= 8 && hour < 16) {
+  //  shift_ = 2;
+  //  redShift_ = 3;
+  //} else if (hour >= 16 && hour < 24) {
+  //  shift_ = 3;
+  //  redShift_ = 1;
+  //} else {
+  //  assert(0);
+  //}
+
+  shift_ = time.getShift();
 
   for (auto itr=crew_.begin(); itr != crew_.end(); ++itr) {
     Person* person = *itr;
@@ -544,13 +758,27 @@ void Ship::timeStep()
     Tile* tile = layout_->getTile(x,y);
 
     if (person->currentPath_.size() == 0 && person->workByShifts_) {
-      if (person->shift_ != shift_) {
+      if (!time.isShift(person->shift_)) {
         if (person->living_ && !person->living_->isInside(x, y)) {
           person->currentPath_ = layout_->findPath(layout_->getTile(x, y), person->living_);
+        } else if (person->living_ && person->living_->isInside(x, y)) {
+          assert(person->livingItem_);
+          int livingItemX = person->livingItem_->getX() + person->living_->getLeft();
+          int livingItemY = person->livingItem_->getY() + person->living_->getTop();
+          if (x != livingItemX || y != livingItemY) {
+            person->currentPath_ = layout_->findPath(layout_->getTile(x, y), layout_->getTile(livingItemX, livingItemY));
+          }
         }
       } else {
         if (person->shiftRoom_ && !person->shiftRoom_->isInside(x, y)) {
           person->currentPath_ = layout_->findPath(layout_->getTile(x, y), person->shiftRoom_);
+        } else if (person->shiftRoom_ && person->shiftRoom_->isInside(x, y)) {
+          assert(person->shiftItem_);
+          int shiftItemX = person->shiftItem_->getX() + person->shiftRoom_->getLeft();
+          int shiftItemY = person->shiftItem_->getY() + person->shiftRoom_->getTop();
+          if (x != shiftItemX || y != shiftItemY) {
+            person->currentPath_ = layout_->findPath(layout_->getTile(x, y), layout_->getTile(shiftItemX, shiftItemY));
+          }
         }
       }
     }
@@ -569,6 +797,22 @@ list<Room*> Ship::getRoomsByType( Room::RoomType type )
   return res;
 }
 
+list<Person*> Ship::getAssignedCrew(Room* room, int shift/* = -1*/)
+{
+  assert(room);
+  list<Person*> res;
+  Room::RoomType type = room->getType();
+  for (auto itr = crew_.begin(); itr != crew_.end(); ++itr) {
+    Person* pers = *itr;
+    if (type == Room::Living && pers->living_ == room && (pers->shift_ == shift || shift == -1)) {
+      res.push_back(pers);
+    } else if (type == Room::Working && pers->shiftRoom_ == room && (pers->shift_ == shift || shift == -1 || pers->officer_)) {
+      res.push_back(pers);
+    }
+  }
+  return res;
+}
+
 Room::Room(CString name, int left, int top, int width, int height, RoomType type):
   name_(name), top_(top), left_(left), width_(width), height_(height), type_(type),capacity_(0)
 {
@@ -577,7 +821,9 @@ Room::Room(CString name, int left, int top, int width, int height, RoomType type
 
 Room::~Room()
 {
-
+  for (auto itr = items_.begin(); itr != items_.end(); ++itr) {
+    delete *itr;
+  }
 }
 
 void Room::addPerson( Person* person )
@@ -593,6 +839,83 @@ void Room::removePerson( Person* person )
 bool Room::isInside( int x, int y )
 {
   return (x >= left_ && y >= top_ && x < left_ + width_ && y < top_ + height_);
+}
+
+void Room::assignPerson( Person* pers )
+{
+  if (type_ == Living) {
+    pers->living_ = this;
+    Room::Item* assignedItem1 = assignPersonForShift(pers, 1);
+    Room::Item* assignedItem2 = assignPersonForShift(pers, 2);
+    Room::Item* assignedItem3 = assignPersonForShift(pers, 3);
+    assert (assignedItem1 && assignedItem1 == assignedItem2 && assignedItem2 == assignedItem3);
+    pers->livingItem_ = assignedItem1;
+  } else if (type_ == Working) {
+    pers->shiftRoom_ = this;
+    Room::Item* assignedItem = assignPersonForShift(pers, pers->shift_);
+    assert(assignedItem);
+    pers->shiftItem_ = assignedItem;
+  } else {
+    assert(0);
+  }
+}
+
+void Room::detachPerson( Person* pers )
+{
+  if (type_ == Living) {
+    assert (pers->living_ == this);
+    detachPersonForShift(pers, 1);
+    detachPersonForShift(pers, 2);
+    detachPersonForShift(pers, 3);
+    pers->living_ = NULL;
+    pers->livingItem_ = NULL;
+  } else if (type_ == Working) {
+    assert(pers->shiftRoom_ == this);
+    detachPersonForShift(pers, pers->shift_);
+    pers->shiftRoom_ = NULL;
+    pers->redShiftItem_ = NULL;
+  } else {
+    assert(0);
+  }
+}
+
+void Room::addItem( Item* item )
+{
+  assert (item->getX() < width_ && item->getY() < height_);
+  capacity_ += item->getCapacity();
+  items_.push_back(item);
+}
+
+Room::Item* Room::assignPersonForShift(Person* pers, int shift)
+{
+  assert(shift >= 1 && shift <= 3);
+  for (auto itr = items_.begin(); itr != items_.end(); ++itr) {
+    Item* item = *itr;
+    set<Person*>* usingInShift = item->getUsing(shift);
+    assert (usingInShift && usingInShift->size() <= (uint32_t)(item->getCapacity()));
+    if (usingInShift->size() >= (uint32_t)item->getCapacity()) {
+      continue;
+    }
+    usingInShift->insert(pers);
+    return item;
+  }
+  return NULL;
+}
+
+void Room::detachPersonForShift( Person* pers, int shift )
+{
+  assert(shift >= 1 && shift <= 3);
+  int found = 0;
+  for (auto itr = items_.begin(); itr != items_.end(); ++itr) {
+    Item* item = *itr;
+    set<Person*>* usingInShift = item->getUsing(shift);
+    assert (usingInShift && usingInShift->size() <= (uint32_t)(item->getCapacity()));
+    if (usingInShift->count(pers) > 0) {
+      usingInShift->erase(pers);
+      ++found;
+    }
+  }
+  assert(found == 1);
 }
 
 Tile::Tile(int texID, int x, int y, bool passible):
@@ -896,4 +1219,20 @@ OtherRoom::OtherRoom( CString name, int left, int top, int width, int height):
 OtherRoom::~OtherRoom()
 {
 
+}
+
+Room::Item::Item(CString name, int x, int y, int capacity):name_(name), x_(x), y_(y), capacity_(capacity)
+{
+  using_ = new set<Person*>*[3];
+  for (int i=0; i<3; ++i) {
+    using_[i] = new set<Person*>();
+  }
+}
+
+Room::Item::~Item()
+{
+  for (int i=0; i<3; ++i) {
+    delete using_[i];
+  }
+  delete[] using_;
 }

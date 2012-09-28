@@ -9,10 +9,12 @@
 #include <crtdbg.h>
 #endif //DEBUG
 #include "RoomInfo.h"
-#include "GUI\Forms\RoomPanel.h"
-#include "GUI\Forms\TestDragDrop.h"
-#include "GUI\WImage.h"
-#include "GUI\Forms\CrewPanel.h"
+#include "RoomPanel.h"
+#include "TestDragDrop.h"
+#include "WImage.h"
+#include "CrewPanel.h"
+#include "HoverInfoPanel.h"
+#include "Controls.h"
 
 const char* Version = "0.1.0";
 
@@ -42,7 +44,7 @@ void toggleVSync()
 }
 
 UUGame::UUGame(): paused_(true), speed_(1), calcStepLength_(0.05), dtModifier_(50),lmDown_(false),rmDown_(false),
-  lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL)
+  lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL), crewPanel_(NULL), roomPanel_(NULL), showCrewManagement_(true)
 {
   nonContKeys_.insert(' ');
   nonContKeys_.insert(VK_ADD);
@@ -94,26 +96,26 @@ bool UUGame::mainLoop()
   ship_->testInit();
   Renderer::getInstance().setCurrentShip(ship_);
 
-  RoomInfo* roomInfo = new RoomInfo();
-  roomInfo->init();
-  layoutManager_.addLayout(roomInfo);
-
-  ship_->setRoomInfo(roomInfo);
+  HoverInfoPanel* hoverInfoPanel = new HoverInfoPanel(&layoutManager_, ship_);
+  hoverInfoPanel->init();
+  layoutManager_.addLayout(hoverInfoPanel);
 
   generalInfo_ = new GeneralInfo();
   generalInfo_->init();
   layoutManager_.addLayout(generalInfo_);
 
-  {
-    RoomPanel* panel = new RoomPanel(&layoutManager_, ship_);
-    panel->init();
-    layoutManager_.addLayout(panel);
-  }
+  Controls* controls = new Controls();
+  controls->init();
+  layoutManager_.addLayout(controls);
 
   {
-    CrewPanel* crewPanel = new CrewPanel(ship_);
-    crewPanel->init();
-    layoutManager_.addLayout(crewPanel);
+    crewPanel_ = new CrewPanel(ship_);
+    crewPanel_->init();
+    layoutManager_.addLayout(crewPanel_);
+
+    roomPanel_ = new RoomPanel(&layoutManager_, ship_);
+    roomPanel_->init();
+    layoutManager_.addLayout(roomPanel_);
   }
 
   while(WM_QUIT!=msg.message) {
@@ -141,7 +143,7 @@ bool UUGame::mainLoop()
       accumulator += delta;
       accumKeys += delta;
 
-      if (speed_ < 1) {
+      if (0 && speed_ < 1) {
         dt = 1.0/speed_;
       } else {
         dt = 1.0;
@@ -153,9 +155,9 @@ bool UUGame::mainLoop()
       }
       while(accumulator >= dt) {
         if (!paused_) {
-          for (int i=0; i<speed_; ++i) {
+          for (int i=0; i<((speed_ < 1)?1:speed_); ++i) {
             time_ += calcStepLength_*dt * (1/dtModifier_);
-            Time::getTime().increase(100);
+            Time::getTime().increase(((speed_ < 1)?speed_:1));
             handlePressedKeys();
             ship_->timeStep();
           }
@@ -308,6 +310,28 @@ void UUGame::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam )
   ship_->handleMouseEvent(message, fx, fy);
 }
 
+float UUGame::getMoveSpeed()
+{
+  if (speed_ < 1) {
+    return 0.01;
+  } else {
+    return 0.1;
+  }
+}
+
+bool UUGame::toggleCrewManagement()
+{
+  showCrewManagement_ = !showCrewManagement_;
+  if (showCrewManagement_) {
+    crewPanel_->setVisible(true);
+    roomPanel_->setVisible(true);
+  } else {
+    crewPanel_->setVisible(false);
+    roomPanel_->setVisible(false);
+  }
+  return showCrewManagement_;
+}
+
 int body(HINSTANCE& hInstance, HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int& nShowCmd)
 {
   UUGame& inst = UUGame::getInstance();
@@ -374,7 +398,7 @@ Time::~Time()
 
 }
 
-void Time::increase( int seconds )
+void Time::increase( float seconds )
 {
   second_ += seconds;
   while (second_ >= 60) {
@@ -397,4 +421,35 @@ void Time::increase( int seconds )
     month_ -= 12;
     ++year_;
   }
+}
+
+int Time::getShift()
+{
+  if (hour_ >= 0 && hour_ < 8) {
+    return 1;
+  } else if (hour_ >= 8 && hour_ < 16) {
+    return 2;
+  } else if (hour_ >= 16 && hour_ < 24) {
+    return 3;
+  } else {
+    assert(0);
+  }
+  return -1;
+}
+
+bool Time::isShift( int shift )
+{
+  if (shift == -1) {
+    return false;
+  }
+  assert (shift >= 1 && shift <= 3);
+  switch (shift) {
+  case 1:
+    return (hour_ >= 0 && hour_ < 8) || (hour_ == 23 && minute_ >= 50) || (hour_ == 8 && minute_ <= 10);
+  case 2:
+    return (hour_ >= 8 && hour_ < 16) || (hour_ == 7 && minute_ >= 50) || (hour_ == 16 && minute_ <= 10);
+  case 3:
+    return (hour_ >= 16 && hour_ < 24) || (hour_ == 15 && minute_ >= 50) || (hour_ == 0 && minute_ <= 10);
+  }
+  return false;
 }

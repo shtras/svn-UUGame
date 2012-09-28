@@ -14,7 +14,6 @@ RoomInfo::~RoomInfo()
 
 void RoomInfo::init()
 {
-  setDimensions(0, 1, 0.2, 0.2);
   visible_ = true;
 
   roomName_ = new WText();
@@ -24,13 +23,12 @@ void RoomInfo::init()
   addWidget(roomName_);
 }
 
-void RoomInfo::render(bool setDimensions/* = true*/)
+void RoomInfo::setRoom( Room* room )
 {
-  if (selectedRoom_) {
-    roomName_->setText(selectedRoom_->getName());
-  } else {
-    roomName_->setText("No room selected");
-  }
-
-  WLayout::render();
+   selectedRoom_ = room;
+   if (selectedRoom_) {
+     roomName_->setText(selectedRoom_->getName());
+   } else {
+     roomName_->setText("No room selected");
+   }
 }

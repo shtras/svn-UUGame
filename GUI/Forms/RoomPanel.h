@@ -10,6 +10,5 @@ public:
   ~RoomPanel();
   void init();
 private:
-  LayoutManager* manager_;
   Ship* ship_;
 };

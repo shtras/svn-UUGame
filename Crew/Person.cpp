@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "Person.h"
+#include "..\UUGame.h"
 
 
 Person::Person()
@@ -16,10 +17,15 @@ Person::Person()
   shiftRoom_ = NULL;
   redShiftRoom_ = NULL;
   workByShifts_ = true;
-  shift_ = 1;
+  shift_ = -1;
   skills_.Cooking = skills_.Electronics = skills_.Engines = skills_.Medicine = skills_.Navigation = skills_.Repair = skills_.Weapons = 0;
   pathPosition_ = 0;
   faceTexID_ = -1;
+  imageInCrewPanel_ = NULL;
+  imageInRoomsPanel_ = NULL;
+  livingItem_ = NULL;
+  shiftItem_ = NULL;
+  redShiftItem_ = NULL;
 }
 
 Person::~Person()
@@ -32,7 +38,8 @@ void Person::pathStep()
   if (currentPath_.size() == 0) {
     return;
   }
-  pathPosition_ += 0.1;
+  float moveSpeed = UUGame::getInstance().getMoveSpeed();
+  pathPosition_ += moveSpeed;
   if (pathPosition_ >= 1) {
     pathPosition_ = 0;
     Tile* oldTile = currentPath_.front();

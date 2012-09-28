@@ -6,9 +6,7 @@
 #include "Renderer.h"
 #include "RoomCrewAssingment.h"
 
-
-
-RoomPanel::RoomPanel(LayoutManager* manager, Ship* ship):manager_(manager),ship_(ship)
+RoomPanel::RoomPanel(LayoutManager* manager, Ship* ship):WTabbedLayout(manager),ship_(ship)
 {
 
 }
@@ -20,7 +18,7 @@ RoomPanel::~RoomPanel()
 
 void RoomPanel::init()
 {
-  setDimensions(0.1, 0.3, 0.7, 0.3);
+  setDimensions(0.2, 0.3, 0.8, 0.3);
   visible_ = true;
 
   //Adding tabs before initialization because adding tab defines its new size and initialization needs it
@@ -37,3 +35,4 @@ void RoomPanel::init()
 
   setActiveTab("Working");
 }
+

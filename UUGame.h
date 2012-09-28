@@ -3,6 +3,9 @@
 #include "Ship.h"
 #include "GeneralInfo.h"
 
+class CrewPanel;
+class RoomPanel;
+
 class UUGame
 {
 public:
@@ -18,10 +21,12 @@ public:
   void speedUp();
   void speedDown();
   void pause();
-  void setSpeed1x() {speed_ = 1;}
+  void setSpeed(float val) {speed_ = val;}
   bool shiftPressed() {return shiftPressed_;}
   bool isPressed(int key);
   const CString& getVersion() {return version_;}
+  float getMoveSpeed();
+  bool toggleCrewManagement();
 private:
   void handlePressedKey(int key);
   void handlePressedKeys();
@@ -50,6 +55,9 @@ private:
   LayoutManager layoutManager_;
   Ship* ship_;
   GeneralInfo* generalInfo_;
+  CrewPanel* crewPanel_;
+  RoomPanel* roomPanel_;
+  bool showCrewManagement_;
 };
 
 class Time
@@ -62,7 +70,9 @@ public:
   int getHour() {return hour_;}
   int getMinute() {return minute_;}
   int getSecond() {return second_;}
-  void increase(int seconds);
+  void increase(float seconds);
+  int getShift();
+  bool isShift(int shift);
 private:
   Time();
   ~Time();
@@ -71,5 +81,5 @@ private:
   int day_;
   int hour_;
   int minute_;
-  int second_;
+  float second_;
 };

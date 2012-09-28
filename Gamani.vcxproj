@@ -204,13 +204,18 @@
   <ItemGroup>
     <ClCompile Include="auxFuncs.cpp" />
     <ClCompile Include="Crew\Person.cpp" />
+    <ClCompile Include="GUI\Forms\Controls.cpp" />
     <ClCompile Include="GUI\Forms\CrewPanel.cpp" />
     <ClCompile Include="GUI\Forms\GeneralInfo.cpp" />
+    <ClCompile Include="GUI\Forms\HoverInfoPanel.cpp" />
     <ClCompile Include="GUI\Forms\PersonInfoFloating.cpp" />
     <ClCompile Include="GUI\Forms\RoomCrewAssignment.cpp" />
     <ClCompile Include="GUI\Forms\RoomInfo.cpp" />
     <ClCompile Include="GUI\Forms\RoomPanel.cpp" />
+    <ClCompile Include="GUI\Forms\ShipInfo.cpp" />
+    <ClCompile Include="GUI\Forms\StarSystem.cpp" />
     <ClCompile Include="GUI\Forms\TestDragDrop.cpp" />
+    <ClCompile Include="GUI\Forms\TileInfo.cpp" />
     <ClCompile Include="GUI\GUIRenderer.cpp" />
     <ClCompile Include="GUI\LayoutManager.cpp" />
     <ClCompile Include="GUI\WImage.cpp" />
@@ -220,6 +225,7 @@
     <ClCompile Include="GUI\WInput.cpp" />
     <ClCompile Include="GUI\WLayout.cpp" />
     <ClCompile Include="GUI\WText.cpp" />
+    <ClCompile Include="GUI\WTextBox.cpp" />
     <ClCompile Include="Ship\Ship.cpp" />
     <ClCompile Include="UUGame.cpp" />
     <ClCompile Include="Generic\CString.cpp" />
@@ -237,13 +243,18 @@
   <ItemGroup>
     <ClInclude Include="auxFuncs.h" />
     <ClInclude Include="Crew\Person.h" />
+    <ClInclude Include="GUI\Forms\Controls.h" />
     <ClInclude Include="GUI\Forms\CrewPanel.h" />
     <ClInclude Include="GUI\Forms\GeneralInfo.h" />
+    <ClInclude Include="GUI\Forms\HoverInfoPanel.h" />
     <ClInclude Include="GUI\Forms\PersonInfoFloating.h" />
     <ClInclude Include="GUI\Forms\RoomCrewAssingment.h" />
     <ClInclude Include="GUI\Forms\RoomInfo.h" />
     <ClInclude Include="GUI\Forms\RoomPanel.h" />
+    <ClInclude Include="GUI\Forms\ShipInfo.h" />
+    <ClInclude Include="GUI\Forms\StarSystem.h" />
     <ClInclude Include="GUI\Forms\TestDragDrop.h" />
+    <ClInclude Include="GUI\Forms\TileInfo.h" />
     <ClInclude Include="GUI\GUIRenderer.h" />
     <ClInclude Include="GUI\LayoutManager.h" />
     <ClInclude Include="GUI\WImage.h" />
@@ -254,6 +265,7 @@
     <ClInclude Include="GUI\WInput.h" />
     <ClInclude Include="GUI\WLayout.h" />
     <ClInclude Include="GUI\WText.h" />
+    <ClInclude Include="GUI\WTextBox.h" />
     <ClInclude Include="Ship\Ship.h" />
     <ClInclude Include="sigslot.h" />
     <ClInclude Include="UUGame.h" />

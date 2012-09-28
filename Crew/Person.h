@@ -2,6 +2,9 @@
 #include "Ship.h"
 #include "CString.h"
 
+class WCrewImage;
+class WCrewPlaceInRoom;
+
 struct Skills
 {
   int Navigation;
@@ -30,12 +33,17 @@ public:
   bool officer_;
   int rank_;
   Room* living_;
+  Room::Item* livingItem_;
   Room* shiftRoom_;
+  Room::Item* shiftItem_;
   Room* redShiftRoom_;
+  Room::Item* redShiftItem_;
   bool workByShifts_;
   list<Tile*> currentPath_;
   int shift_;
   Skills skills_;
   float pathPosition_;
   GLuint faceTexID_;
+  WCrewImage* imageInCrewPanel_;
+  WCrewPlaceInRoom* imageInRoomsPanel_;
 };

@@ -12,5 +12,5 @@ WText::~WText()
 
 void WText::render(double left, double top, double width, double height)
 {
-  Renderer::getInstance().textOut(left, top, 0, "%s", text_.operator const char *());
+  Renderer::getInstance().textOut(left, top, 0, false, "%s", text_.operator const char *());
 }
