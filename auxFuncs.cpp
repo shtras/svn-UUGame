@@ -159,3 +159,16 @@ float getSquareWidthForHeightInLayout(float height, WLayout* layout)
 {
   return height / (layout->getWidth()/layout->getHeight() * (float)Renderer::getInstance().getWidth() / (float)Renderer::getInstance().getHeight());
 }
+
+void drawCircle(float radius, bool filled, int segments/* = 36*/)
+{
+  if (filled) {
+    glBegin(GL_POLYGON);
+  } else {
+    glBegin(GL_LINE_LOOP);
+  }
+  for (int i=0; i<360; i+=360/segments) {
+    glVertex3f(cos(DegToRad(i))*radius, sin(DegToRad(i))*radius, 0);
+  }
+  glEnd();
+}

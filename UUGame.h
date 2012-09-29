@@ -2,6 +2,7 @@
 #include "LayoutManager.h"
 #include "Ship.h"
 #include "GeneralInfo.h"
+#include "GUI\Forms\HoverInfoPanel.h"
 
 class CrewPanel;
 class RoomPanel;
@@ -9,6 +10,7 @@ class RoomPanel;
 class UUGame
 {
 public:
+  enum CentralScreenState {DrawShip = 0, DrawNavigationMap, BadState};
   static UUGame& getInstance();
   bool init(HINSTANCE& hIhstance);
   bool run();
@@ -27,6 +29,8 @@ public:
   const CString& getVersion() {return version_;}
   float getMoveSpeed();
   bool toggleCrewManagement();
+  CentralScreenState getScreenState() {return centralState_;}
+  void changeCentralState(CentralScreenState state);
 private:
   void handlePressedKey(int key);
   void handlePressedKeys();
@@ -57,7 +61,10 @@ private:
   GeneralInfo* generalInfo_;
   CrewPanel* crewPanel_;
   RoomPanel* roomPanel_;
+  HoverInfoShipPanel* hoverInfoShipPanel_;
+  HoverInfoNavPanel* hoverInfoNavPanel_;
   bool showCrewManagement_;
+  CentralScreenState centralState_;
 };
 
 class Time

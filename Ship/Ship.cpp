@@ -8,7 +8,7 @@ Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL
 {
   shift_ = 1;
   redShift_ = 2;
-  tileSize_ = 28;
+  tileSize_ = 40;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
   tileHeight_ = tileWidth_ * Renderer::getInstance().getAspectRatio();

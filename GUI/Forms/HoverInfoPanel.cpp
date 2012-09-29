@@ -3,19 +3,20 @@
 #include "TileInfo.h"
 #include "RoomInfo.h"
 #include "ShipInfo.h"
+#include "PlanetInfo.h"
 
 
-HoverInfoPanel::HoverInfoPanel(LayoutManager* manager, Ship* ship):WTabbedLayout(manager), ship_(ship)
+HoverInfoShipPanel::HoverInfoShipPanel(LayoutManager* manager, Ship* ship):WTabbedLayout(manager), ship_(ship)
 {
 
 }
 
-HoverInfoPanel::~HoverInfoPanel()
+HoverInfoShipPanel::~HoverInfoShipPanel()
 {
 
 }
 
-void HoverInfoPanel::init()
+void HoverInfoShipPanel::init()
 {
   setDimensions(0.8, 1, 0.2, 0.3);
   visible_ = true;
@@ -38,4 +39,27 @@ void HoverInfoPanel::init()
   manager_->addLayout(shipInfo);
 
   setActiveTab("Room Info");
+}
+
+HoverInfoNavPanel::HoverInfoNavPanel(LayoutManager* manager):WTabbedLayout(manager)
+{
+
+}
+
+HoverInfoNavPanel::~HoverInfoNavPanel()
+{
+
+}
+
+void HoverInfoNavPanel::init()
+{
+  setDimensions(0.8, 1, 0.2, 0.3);
+  visible_ = true;
+
+  PlanetInfo* planetInfo = new PlanetInfo();
+  addTab("Planet Info", planetInfo);
+  planetInfo->init();
+  manager_->addLayout(planetInfo);
+
+  setActiveTab("Planet Info");
 }

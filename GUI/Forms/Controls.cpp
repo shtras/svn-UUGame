@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 #include "Controls.h"
-#include "..\..\UUGame.h"
+#include "UUGame.h"
 
 
 
@@ -16,7 +16,7 @@ Controls::~Controls()
 
 void Controls::init()
 {
-  setDimensions(0.2, 0.98, 0.6, 0.08);
+  setDimensions(0.1, 0.98, 0.7, 0.05);
   visible_ = true;
 
   slowSpeedButton_ = new WButton();
@@ -50,6 +50,19 @@ void Controls::init()
   crewManagementButton_->sigClick.connect(this, &Controls::crewManagementClick);
   crewManagementButton_->setHighlighted(true);
   addWidget(crewManagementButton_);
+
+  drawShipButton_ = new WButton();
+  drawShipButton_->setDimensions(0.95, 0.5, 0.05, 0.5);
+  drawShipButton_->setLabel("Ship");
+  drawShipButton_->sigClick.connect(this, &Controls::drawShipClick);
+  drawShipButton_->setHighlighted(true);
+  addWidget(drawShipButton_);
+
+  drawMapButton_ = new WButton();
+  drawMapButton_->setDimensions(0.95, 0, 0.05, 0.5);
+  drawMapButton_->setLabel("Map");
+  drawMapButton_->sigClick.connect(this, &Controls::drawMapClick);
+  addWidget(drawMapButton_);
 }
 
 void Controls::slowSpeedClick()
@@ -91,4 +104,18 @@ void Controls::fasterSpeedClick()
 void Controls::crewManagementClick()
 {
   crewManagementButton_->setHighlighted(UUGame::getInstance().toggleCrewManagement());
+}
+
+void Controls::drawShipClick()
+{
+  drawMapButton_->setHighlighted(false);
+  drawShipButton_->setHighlighted(true);
+  UUGame::getInstance().changeCentralState(UUGame::DrawShip);
+}
+
+void Controls::drawMapClick()
+{
+  drawMapButton_->setHighlighted(true);
+  drawShipButton_->setHighlighted(false);
+  UUGame::getInstance().changeCentralState(UUGame::DrawNavigationMap);
 }

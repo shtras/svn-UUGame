@@ -15,6 +15,7 @@
 #include "CrewPanel.h"
 #include "HoverInfoPanel.h"
 #include "Controls.h"
+#include "Universe\Universe.h"
 
 const char* Version = "0.1.0";
 
@@ -44,7 +45,8 @@ void toggleVSync()
 }
 
 UUGame::UUGame(): paused_(true), speed_(1), calcStepLength_(0.05), dtModifier_(50),lmDown_(false),rmDown_(false),
-  lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL), crewPanel_(NULL), roomPanel_(NULL), showCrewManagement_(true)
+  lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL), crewPanel_(NULL), roomPanel_(NULL), showCrewManagement_(true),
+  centralState_(DrawShip)
 {
   nonContKeys_.insert(' ');
   nonContKeys_.insert(VK_ADD);
@@ -93,12 +95,20 @@ bool UUGame::mainLoop()
   int cntToPause = 0;
 
   ship_ = new Ship();
-  ship_->testInit();
+  ship_->testInit1();
   Renderer::getInstance().setCurrentShip(ship_);
 
-  HoverInfoPanel* hoverInfoPanel = new HoverInfoPanel(&layoutManager_, ship_);
-  hoverInfoPanel->init();
-  layoutManager_.addLayout(hoverInfoPanel);
+  Universe& universe = Universe::getUniverse();
+  universe.init();
+
+  hoverInfoShipPanel_ = new HoverInfoShipPanel(&layoutManager_, ship_);
+  hoverInfoShipPanel_->init();
+  layoutManager_.addLayout(hoverInfoShipPanel_);
+
+  hoverInfoNavPanel_ = new HoverInfoNavPanel(&layoutManager_);
+  hoverInfoNavPanel_->init();
+  hoverInfoNavPanel_->setVisible(false);
+  layoutManager_.addLayout(hoverInfoNavPanel_);
 
   generalInfo_ = new GeneralInfo();
   generalInfo_->init();
@@ -191,10 +201,14 @@ void UUGame::handlePressedKey(int key)
     paused_ = !paused_;
     break;
   case VK_ADD:
-    ship_->increaseSize();
+    if (centralState_ == DrawShip) {
+      ship_->increaseSize();
+    }
     break;
   case VK_SUBTRACT:
-    ship_->decreaseSize();
+    if (centralState_ == DrawShip) {
+      ship_->decreaseSize();
+    }
     break;
   default:
     break;
@@ -307,7 +321,13 @@ void UUGame::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam )
   }
   float fx = x / (float)Renderer::getInstance().getWidth();
   float fy = y / (float)Renderer::getInstance().getHeight();
-  ship_->handleMouseEvent(message, fx, fy);
+  switch(centralState_) {
+  case DrawShip:
+    ship_->handleMouseEvent(message, fx, fy);
+    break;
+  case DrawNavigationMap:
+    break;
+  }
 }
 
 float UUGame::getMoveSpeed()
@@ -330,6 +350,23 @@ bool UUGame::toggleCrewManagement()
     roomPanel_->setVisible(false);
   }
   return showCrewManagement_;
+}
+
+void UUGame::changeCentralState( CentralScreenState state )
+{
+  centralState_ = state;
+  switch(state) {
+  case DrawShip:
+    hoverInfoNavPanel_->setVisible(false);
+    hoverInfoShipPanel_->setVisible(true);
+    break;
+  case DrawNavigationMap:
+    hoverInfoNavPanel_->setVisible(true);
+    hoverInfoShipPanel_->setVisible(false);
+    break;
+  default:
+    assert(0);
+  }
 }
 
 int body(HINSTANCE& hInstance, HINSTANCE& hPrevInstance, LPSTR& lpCmdLine, int& nShowCmd)

@@ -2,12 +2,21 @@
 #include "WTabbedLayout.h"
 #include "Ship.h"
 
-class HoverInfoPanel: public WTabbedLayout
+class HoverInfoShipPanel: public WTabbedLayout
 {
 public:
-  HoverInfoPanel(LayoutManager* manager, Ship* ship);
-  ~HoverInfoPanel();
+  HoverInfoShipPanel(LayoutManager* manager, Ship* ship);
+  ~HoverInfoShipPanel();
   void init();
 private:
   Ship* ship_;
+};
+
+class HoverInfoNavPanel: public WTabbedLayout
+{
+public:
+  HoverInfoNavPanel(LayoutManager* manager);
+  ~HoverInfoNavPanel();
+  void init();
+private:
 };

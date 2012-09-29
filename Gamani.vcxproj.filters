@@ -146,8 +146,14 @@
     <ClCompile Include="GUI\Forms\ShipInfo.cpp">
       <Filter>Source Files\GUI\Forms</Filter>
     </ClCompile>
-    <ClCompile Include="GUI\Forms\StarSystem.cpp">
+    <ClCompile Include="Universe\StarSystem.cpp">
       <Filter>Source Files\Universe</Filter>
+    </ClCompile>
+    <ClCompile Include="Universe\Universe.cpp">
+      <Filter>Source Files\Universe</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\PlanetInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -253,8 +259,14 @@
     <ClInclude Include="GUI\Forms\ShipInfo.h">
       <Filter>Header Files\GUI\Forms</Filter>
     </ClInclude>
-    <ClInclude Include="GUI\Forms\StarSystem.h">
+    <ClInclude Include="Universe\StarSystem.h">
       <Filter>Header Files\Universe</Filter>
+    </ClInclude>
+    <ClInclude Include="Universe\Universe.h">
+      <Filter>Header Files\Universe</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\PlanetInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -27,7 +27,7 @@ void RoomCrewAssignment::init()
 
 void RoomCrewAssignment::initLiving()
 {
-  float roomX = 0.05;
+  float roomX = 0.1;
   list<Room*> rooms = ship_->getRoomsByType(roomsType_);
   for (auto itr = rooms.begin(); itr != rooms.end(); ++itr) {
     Room* room = *itr;
@@ -40,7 +40,7 @@ void RoomCrewAssignment::initLiving()
     bool hasMoreCrew = crewItr != crewInRoom.end();
     float picX = roomX;
     float picY = 0.8;
-    float picHeight = 0.1;
+    float picHeight = 0.15;
     float picWidth = getSquareWidthForHeightInLayout(picHeight, this);
     for (int i=0; i<room->getCapacity(); ++i) {
       WCrewPlaceInRoom* persPlace = new WCrewPlaceInRoom(-1, room, -1);
@@ -58,7 +58,7 @@ void RoomCrewAssignment::initLiving()
       picX += picWidth + 0.01;
       if (picX >= roomX + 0.1 - picWidth) {
         picX = roomX;
-        picY -= 0.12;
+        picY -= picHeight + 0.03;
       }
     }
     roomX += 0.1;
@@ -70,17 +70,17 @@ void RoomCrewAssignment::initWorking()
   float roomX = 0.08;
   list<Room*> rooms = ship_->getRoomsByType(roomsType_);
   WText* shift1Text = new WText();
-  shift1Text->setDimensions(0.015, 0.9, 1, 1);
+  shift1Text->setDimensions(0.015, 0.85, 1, 1);
   shift1Text->setText("Shift 1");
   addWidget(shift1Text);
 
   WText* shift2Text = new WText();
-  shift2Text->setDimensions(0.015, 0.6, 1, 1);
+  shift2Text->setDimensions(0.015, 0.55, 1, 1);
   shift2Text->setText("Shift 2");
   addWidget(shift2Text);
 
   WText* shift3Text = new WText();
-  shift3Text->setDimensions(0.015, 0.3, 1, 1);
+  shift3Text->setDimensions(0.015, 0.25, 1, 1);
   shift3Text->setText("Shift 3");
   addWidget(shift3Text);
 
@@ -94,9 +94,9 @@ void RoomCrewAssignment::initWorking()
     roomName->setText(room->getName());
     addWidget(roomName);
     for (int shiftNum = 1; shiftNum < 4; ++shiftNum) {
-      float imageY = 0.8 - (shiftNum-1) * 0.3;
+      float imageY = 0.75 - (shiftNum-1) * 0.3;
       float imageX = roomX;
-      float imageHeight = 0.1;
+      float imageHeight = 0.15;
       float imageWidth = getSquareWidthForHeightInLayout(imageHeight, this);
       list<Person*> crewInRoom = ship_->getAssignedCrew(room, shiftNum);
       auto crewItr = crewInRoom.begin();
@@ -133,7 +133,7 @@ void RoomCrewAssignment::render( bool setDimensions /*= true*/ )
   WLayout::render(setDimensions);
   if (roomsType_ == Room::Working) {
     int shift = Time::getTime().getShift();
-    float y = 1 - (shift-1)*0.6 - 0.12;
+    float y = 1 - (shift-1)*0.6 - 0.15;
     glColor3f(0.95, 0.6, 0.1);
     //glDisable(GL_DEPTH_TEST);
     glLineWidth(3);

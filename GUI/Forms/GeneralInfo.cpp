@@ -15,11 +15,11 @@ GeneralInfo::~GeneralInfo()
 
 void GeneralInfo::init()
 {
-  setDimensions(0.2,1,0.6,0.02);
+  setDimensions(0.1,1,0.7,0.02);
   visible_ = true;
 
   timeText_ = new WText();
-  timeText_->setDimensions(0.1, 0.1, 0.7, 0.7);
+  timeText_->setDimensions(0.1, 0.1, 1, 1);
   addWidget(timeText_);
   timeText_->setText("Clock");
 

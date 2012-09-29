@@ -30,6 +30,7 @@ public:
   float getAspectRatio();
   bool isWithinShipRenderArea(int& x, int& y);
   GLuint getImage(int i) {return images_[i];}
+  float getDrawAreaAspect();
 private:
   Renderer();
   ~Renderer();
@@ -50,6 +51,8 @@ private:
   Ship* currentShip_;
   float shipAreaX_;
   float shipAreaY_;
+  float shipAreaWidth_;
+  float shipAreaHeight_;
   int viewPortWidth_;
   int viewPortHeight_;
 };

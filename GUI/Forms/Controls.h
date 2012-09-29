@@ -15,9 +15,15 @@ private:
   WButton* fasterSpeedButton_;
   WButton* crewManagementButton_;
 
+  WButton* drawShipButton_;
+  WButton* drawMapButton_;
+
   void slowSpeedClick();
   void normalSpeedClick();
   void fastSpeedClick();
   void fasterSpeedClick();
   void crewManagementClick();
+
+  void drawShipClick();
+  void drawMapClick();
 };

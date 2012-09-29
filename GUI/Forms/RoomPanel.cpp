@@ -18,7 +18,7 @@ RoomPanel::~RoomPanel()
 
 void RoomPanel::init()
 {
-  setDimensions(0.2, 0.3, 0.8, 0.3);
+  setDimensions(0.1, 0.2, 0.7, 0.2);
   visible_ = true;
 
   //Adding tabs before initialization because adding tab defines its new size and initialization needs it

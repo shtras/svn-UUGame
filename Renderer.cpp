@@ -1,9 +1,11 @@
 #include "StdAfx.h"
 #include "UUGame.h"
 #include "Renderer.h"
+#include "Universe\Universe.h"
 
 
-Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.25), shipAreaY_(0.35), viewPortWidth_(0), viewPortHeight_(0)
+Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.1), shipAreaY_(0.2), viewPortWidth_(0), viewPortHeight_(0),
+  shipAreaWidth_(0.7), shipAreaHeight_(0.73)
 {
 }
 
@@ -380,11 +382,28 @@ void Renderer::render()
   glEnd();
   glDisable(GL_TEXTURE_2D);
 
-
-  if (currentShip_) {
-    glTranslatef(shipAreaX_, shipAreaY_, 0);
-    currentShip_->render();
+  UUGame::CentralScreenState state = UUGame::getInstance().getScreenState();
+  requestViewPort(shipAreaX_, shipAreaY_ + shipAreaHeight_, shipAreaWidth_, shipAreaHeight_);
+  switch (state) {
+  case UUGame::DrawShip:
+    if (currentShip_) {
+      currentShip_->render();
+    }
+    break;
+  case UUGame::DrawNavigationMap:
+    glColor4f(0, 0, 0, 0.7);
+    glBegin(GL_POLYGON);
+    glVertex3f(0, 0, -0.05);
+    glVertex3f(1, 0, -0.05);
+    glVertex3f(1, 1, -0.05);
+    glVertex3f(0, 1, -0.05);
+    glEnd();
+    Universe::getUniverse().render();
+    break;
+  default:
+    assert(0);
   }
+  resetViewPort();
 }
 
 void Renderer::renderEnd()
@@ -485,11 +504,18 @@ void Renderer::initImages()
 
 bool Renderer::isWithinShipRenderArea(int& x, int& y)
 {
-  if (x >= shipAreaX_*width_ && y <= (1-shipAreaY_)*height_) {
+  if (x >= shipAreaX_*width_ && y <= (1-shipAreaY_)*height_ && x < (shipAreaX_+shipAreaWidth_)*width_ && y > (1-shipAreaY_-shipAreaHeight_)*height_) {
     x -= shipAreaX_*width_;
+    x /= shipAreaWidth_;
     y = height_ - y;
     y -= shipAreaY_*height_;
+    y /= shipAreaHeight_;
     return true;
   }
   return false;
+}
+
+float Renderer::getDrawAreaAspect()
+{
+  return shipAreaWidth_/shipAreaHeight_*(width_/(float)height_);
 }

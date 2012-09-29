@@ -19,26 +19,26 @@ CrewPanel::~CrewPanel()
 
 void CrewPanel::init()
 {
-  setDimensions(0, 1, 0.2, 1);
+  setDimensions(0, 1, 0.1, 1);
   visible_ = true;
 
   WText* shift1Text = new WText();
-  shift1Text->setDimensions(0.01, 0.95, 1, 1);
+  shift1Text->setDimensions(0.01, 0.975, 1, 1);
   shift1Text->setText("Shift 1");
   addWidget(shift1Text);
 
   WText* shift2Text = new WText();
-  shift2Text->setDimensions(0.01, 0.7, 1, 1);
+  shift2Text->setDimensions(0.01, 0.725, 1, 1);
   shift2Text->setText("Shift 2");
   addWidget(shift2Text);
 
   WText* shift3Text = new WText();
-  shift3Text->setDimensions(0.01, 0.45, 1, 1);
+  shift3Text->setDimensions(0.01, 0.475, 1, 1);
   shift3Text->setText("Shift 3");
   addWidget(shift3Text);
 
   WText* unassignedText = new WText();
-  unassignedText->setDimensions(0.01, 0.2, 1, 1);
+  unassignedText->setDimensions(0.01, 0.225, 1, 1);
   unassignedText->setText("Unassigned crew");
   addWidget(unassignedText);
 
@@ -47,17 +47,17 @@ void CrewPanel::init()
   placesByShift_ = new vector<WCrewImage*>*[4];
   
   for (int i=0; i<4; ++i) {
-    float y = (i > 0)?(1 - 0.25*(i-1) - 0.1):(0.15);
-    float x = 0.1;
+    float y = (i > 0)?(1 - 0.25*(i-1) - 0.06):(0.19);
+    float x = 0.05;
     placesByShift_[i] = new vector<WCrewImage*>();
     for (int j=0; j<ship_->getCrewCapacity(); ++j) {
       WCrewImage* image = new WCrewImage(-1, this, NULL);
-      float height = 0.03;
+      float height = 0.025;
       float width = getSquareWidthForHeightInLayout(height, this);
       image->setDimensions(x, y, width, height);
       x += width + 0.01;
       if (x + width > 1) {
-        x = 0.1;
+        x = 0.05;
         y -= height + 0.01;
       }
       placesByShift_[i]->push_back(image);
