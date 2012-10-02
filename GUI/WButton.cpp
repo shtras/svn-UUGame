@@ -34,7 +34,7 @@ void WButton::render(double left, double top, double width, double height)
       color1 = Vector4(0.17, 0.6, 0.4, 0.95);
       color2 = Vector4(color1[0]+0.22, color1[1]+0.22, color1[2]+0.22, color1[3]);
     } else {
-      color1 = Vector4(0.12, 0.55, 0.35, 0.9);
+      color1 = Vector4(0.12, 0.65, 0.35, 0.9);
       color2 = Vector4(color1[0]+0.22, color1[1]+0.22, color1[2]+0.22, color1[3]);
     }
   } else if (isHovered()) {

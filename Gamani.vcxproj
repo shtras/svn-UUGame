@@ -208,6 +208,8 @@
     <ClCompile Include="GUI\Forms\CrewPanel.cpp" />
     <ClCompile Include="GUI\Forms\GeneralInfo.cpp" />
     <ClCompile Include="GUI\Forms\HoverInfoPanel.cpp" />
+    <ClCompile Include="GUI\Forms\NavControl.cpp" />
+    <ClCompile Include="GUI\Forms\NavInfo.cpp" />
     <ClCompile Include="GUI\Forms\PersonInfoFloating.cpp" />
     <ClCompile Include="GUI\Forms\PlanetInfo.cpp" />
     <ClCompile Include="GUI\Forms\RoomCrewAssignment.cpp" />
@@ -216,6 +218,7 @@
     <ClCompile Include="GUI\Forms\ShipInfo.cpp" />
     <ClCompile Include="GUI\Forms\TestDragDrop.cpp" />
     <ClCompile Include="GUI\Forms\TileInfo.cpp" />
+    <ClCompile Include="GUI\Forms\WeaponsInfo.cpp" />
     <ClCompile Include="GUI\GUIRenderer.cpp" />
     <ClCompile Include="GUI\LayoutManager.cpp" />
     <ClCompile Include="GUI\WImage.cpp" />
@@ -249,6 +252,8 @@
     <ClInclude Include="GUI\Forms\CrewPanel.h" />
     <ClInclude Include="GUI\Forms\GeneralInfo.h" />
     <ClInclude Include="GUI\Forms\HoverInfoPanel.h" />
+    <ClInclude Include="GUI\Forms\NavControl.h" />
+    <ClInclude Include="GUI\Forms\NavInfo.h" />
     <ClInclude Include="GUI\Forms\PersonInfoFloating.h" />
     <ClInclude Include="GUI\Forms\PlanetInfo.h" />
     <ClInclude Include="GUI\Forms\RoomCrewAssingment.h" />
@@ -257,6 +262,7 @@
     <ClInclude Include="GUI\Forms\ShipInfo.h" />
     <ClInclude Include="GUI\Forms\TestDragDrop.h" />
     <ClInclude Include="GUI\Forms\TileInfo.h" />
+    <ClInclude Include="GUI\Forms\WeaponsInfo.h" />
     <ClInclude Include="GUI\GUIRenderer.h" />
     <ClInclude Include="GUI\LayoutManager.h" />
     <ClInclude Include="GUI\WImage.h" />

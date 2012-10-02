@@ -2,10 +2,15 @@
 #include "RoomInfo.h"
 #include "PersonInfoFloating.h"
 #include "TileInfo.h"
+#include "Universe.h"
+#include "StarSystem.h"
+#include "WeaponsInfo.h"
 
 class Person;
 class TileLayout;
 class Tile;
+class Device;
+class Weapon;
 
 class Room
 {
@@ -50,6 +55,7 @@ public:
 protected:
   Room::Item* assignPersonForShift(Person* pers, int shift);
   void detachPersonForShift(Person* pers, int shift);
+  virtual void updateCrewWorking();
   int top_;
   int left_;
   int width_;
@@ -60,6 +66,7 @@ protected:
   set<Person*> crewInRoom_;
   int capacity_;
   list<Item*> items_;
+  set<Person*> crewWorking_;
 };
 
 class Tile
@@ -107,6 +114,9 @@ public:
   list<Person*> getAssignedCrew(Room* room, int shift = -1);
   PersonInfoFloating* getPersFloatingInfo() {return floatingInfo_;}
   int getCrewCapacity() {return crewCapacity_;}
+  void addWeapon(Weapon* weapon) {weapons_.push_back(weapon);}
+  const list<Weapon*>& getWeapons() {return weapons_;}
+  void setWeaponsInfo(WeaponsInfo* info) {weaponsInfo_ = info;}
 private:
   void drawWalls();
   void drawVerticalWall(Tile::WallType type);
@@ -123,6 +133,7 @@ private:
 
   RoomInfo* roomInfo_;
   TileInfo* tileInfo_;
+  WeaponsInfo* weaponsInfo_;
   Room* hoveredRoom_;
   Tile* hoveredTile_;
 
@@ -135,6 +146,7 @@ private:
   int redShift_;
   PersonInfoFloating* floatingInfo_;
   int crewCapacity_;
+  list<Weapon*> weapons_;
 };
 
 class LivingRoom: public Room
@@ -150,7 +162,10 @@ class WorkingRoom: public Room
 public:
   WorkingRoom(CString name, int left, int top, int width, int height);
   ~WorkingRoom();
+  void setControlledDevice(Device* device) {controlledDevice_ = device;}
+  void updateCrewWorking();
 private:
+  Device* controlledDevice_;
 };
 
 class OtherRoom: public Room
@@ -159,6 +174,41 @@ public:
   OtherRoom(CString name, int left, int top, int width, int height);
   ~OtherRoom();
 private:
+};
+
+class Device
+{
+public:
+  enum DeviceType {EngineDevice, WeaponDevice, ReactorDevice, BadType};
+  Device(DeviceType type);
+  virtual ~Device();
+  void setControlRoom(Room* room);
+  void updateEfficiency(float value) {efficiency_ = value;}
+  virtual void update() {}
+  WorkingRoom* getControlRoom() {return controlRoom_;}
+  float getEfficiency() {return efficiency_;}
+protected:
+  WorkingRoom* controlRoom_;
+  DeviceType type_;
+  float efficiency_;
+};
+
+class Weapon: public Device
+{
+public:
+  Weapon();
+  ~Weapon();
+  void update();
+  float getLoaded() {return loaded_;}
+  void setFireAtWill(bool value) {fireAtWill_ = value;}
+  bool fireAtWill() {return fireAtWill_;}
+  void fire();
+private:
+  float reloadSpeed_;
+  int power_;
+  float accuracy_;
+  float loaded_;
+  bool fireAtWill_;
 };
 
 class TileLayout

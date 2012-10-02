@@ -4,6 +4,7 @@
 #include "RoomInfo.h"
 #include "ShipInfo.h"
 #include "PlanetInfo.h"
+#include "..\..\Universe\Universe.h"
 
 
 HoverInfoShipPanel::HoverInfoShipPanel(LayoutManager* manager, Ship* ship):WTabbedLayout(manager), ship_(ship)
@@ -60,6 +61,8 @@ void HoverInfoNavPanel::init()
   addTab("Planet Info", planetInfo);
   planetInfo->init();
   manager_->addLayout(planetInfo);
+
+  Universe::getUniverse().setPlanetInfo(planetInfo);
 
   setActiveTab("Planet Info");
 }

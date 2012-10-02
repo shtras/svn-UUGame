@@ -155,6 +155,15 @@
     <ClCompile Include="GUI\Forms\PlanetInfo.cpp">
       <Filter>Source Files\GUI\Forms</Filter>
     </ClCompile>
+    <ClCompile Include="GUI\Forms\NavControl.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\NavInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
+    <ClCompile Include="GUI\Forms\WeaponsInfo.cpp">
+      <Filter>Source Files\GUI\Forms</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Generic\CString.h">
@@ -266,6 +275,15 @@
       <Filter>Header Files\Universe</Filter>
     </ClInclude>
     <ClInclude Include="GUI\Forms\PlanetInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\NavControl.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\NavInfo.h">
+      <Filter>Header Files\GUI\Forms</Filter>
+    </ClInclude>
+    <ClInclude Include="GUI\Forms\WeaponsInfo.h">
       <Filter>Header Files\GUI\Forms</Filter>
     </ClInclude>
   </ItemGroup>

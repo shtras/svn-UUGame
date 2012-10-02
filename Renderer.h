@@ -31,6 +31,8 @@ public:
   bool isWithinShipRenderArea(int& x, int& y);
   GLuint getImage(int i) {return images_[i];}
   float getDrawAreaAspect();
+  void setDrawPause();
+  void setDrawPlay();
 private:
   Renderer();
   ~Renderer();
@@ -55,4 +57,6 @@ private:
   float shipAreaHeight_;
   int viewPortWidth_;
   int viewPortHeight_;
+  float drawPause_;
+  float drawPlay_;
 };

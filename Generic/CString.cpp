@@ -70,7 +70,12 @@ CString::CString(int val, int minLen)
 
 CString::CString(float val)
 {
-  assert(0);
+  std::stringstream ss;
+  ss << val;
+  std::string str = ss.str();
+  len_ = str.size();
+  cont_ = new char[len_+1];
+  strcpy(cont_, str.c_str());
 }
 
 CString::CString(double val)

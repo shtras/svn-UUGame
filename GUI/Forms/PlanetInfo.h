@@ -12,4 +12,8 @@ public:
   void setPlanet(Planet* planet);
 private:
   WText* nameText_;
+  WText* typeText_;
+  WText* satellitesText_;
+  WText* orbitRadiusText_;
+  WText* orbitPeriodText_;
 };

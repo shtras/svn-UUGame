@@ -2,16 +2,16 @@
 #include "Ship.h"
 #include "Renderer.h"
 #include "Person.h"
-#include "..\UUGame.h"
+#include "UUGame.h"
 
-Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0)
+Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0), weaponsInfo_(NULL)
 {
   shift_ = 1;
   redShift_ = 2;
   tileSize_ = 40;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
-  tileHeight_ = tileWidth_ * Renderer::getInstance().getAspectRatio();
+  tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
 
   floatingInfo_ = new PersonInfoFloating();
   floatingInfo_->init();
@@ -40,25 +40,37 @@ void Ship::testInit1()
   room = new OtherRoom("Escape pod 1", 0, 13, 2, 2);
   addRoom(room);
 
-  room = new WorkingRoom("Laser deck 1", 2, 15, 2, 2);
+  WorkingRoom* laserDeck1 = new WorkingRoom("Laser deck 1", 2, 15, 2, 2);
   item = new Room::Item("Console", 0, 1, 1);
-  room->addItem(item);
-  addRoom(room);
+  laserDeck1->addItem(item);
+  addRoom(laserDeck1);
+  Weapon* weap = new Weapon();
+  weap->setControlRoom(laserDeck1);
+  addWeapon(weap);
 
-  room = new WorkingRoom("Laser deck 2", 2, 0, 2, 2);
+  WorkingRoom* laserDeck2 = new WorkingRoom("Laser deck 2", 2, 0, 2, 2);
   item = new Room::Item("Console", 0, 0, 1);
-  room->addItem(item);
-  addRoom(room);
+  laserDeck2->addItem(item);
+  addRoom(laserDeck2);
+  weap = new Weapon();
+  weap->setControlRoom(laserDeck2);
+  addWeapon(weap);
 
-  room = new WorkingRoom("Laser deck 3", 12, 15, 2, 2);
+  WorkingRoom* laserDeck3 = new WorkingRoom("Laser deck 3", 12, 15, 2, 2);
   item = new Room::Item("Console", 0, 1, 1);
-  room->addItem(item);
-  addRoom(room);
+  laserDeck3->addItem(item);
+  addRoom(laserDeck3);
+  weap = new Weapon();
+  weap->setControlRoom(laserDeck3);
+  addWeapon(weap);
 
   room = new WorkingRoom("Laser deck 4", 12, 0, 2, 2);
   item = new Room::Item("Console", 0, 0, 1);
   room->addItem(item);
   addRoom(room);
+  weap = new Weapon();
+  weap->setControlRoom(room);
+  addWeapon(weap);
 
   room = new LivingRoom("1st officer quarters", 2, 11, 2, 3);
   addRoom(room);
@@ -72,12 +84,12 @@ void Ship::testInit1()
   room = new OtherRoom("Recreation", 9, 11, 4, 3);
   addRoom(room);
 
-  room = new WorkingRoom("Electronics", 2, 7, 3, 3);
+  WorkingRoom* electronics = new WorkingRoom("Electronics", 2, 7, 3, 3);
   item = new Room::Item("Console", 0, 0, 1);
-  room->addItem(item);
+  electronics->addItem(item);
   item = new Room::Item("Console", 0, 2, 1);
-  room->addItem(item);
-  addRoom(room);
+  electronics->addItem(item);
+  addRoom(electronics);
 
   room = new WorkingRoom("Bridge", 5, 7, 3, 3);
   addRoom(room);
@@ -119,19 +131,19 @@ void Ship::testInit1()
   room = new OtherRoom("Storage", 10, 3, 3, 3);
   addRoom(room);
 
-  room = new WorkingRoom("Engine1 control", 14, 12, 3, 3);
+  WorkingRoom* engineControl1 = new WorkingRoom("Engine1 control", 14, 12, 3, 3);
   item = new Room::Item("Console", 0, 1, 1);
-  room->addItem(item);
+  engineControl1->addItem(item);
   item = new Room::Item("Console", 0, 2, 1);
-  room->addItem(item);
-  addRoom(room);
+  engineControl1->addItem(item);
+  addRoom(engineControl1);
 
-  room = new WorkingRoom("Engine2 control", 14, 2, 3, 3);
+  WorkingRoom* engineControl2 = new WorkingRoom("Engine2 control", 14, 2, 3, 3);
   item = new Room::Item("Console", 0, 0, 1);
-  room->addItem(item);
+  engineControl2->addItem(item);
   item = new Room::Item("Console", 0, 1, 1);
-  room->addItem(item);
-  addRoom(room);
+  engineControl2->addItem(item);
+  addRoom(engineControl2);
 
   room = new OtherRoom("Reactor", 15, 6, 2, 5);
   addRoom(room);
@@ -148,42 +160,56 @@ void Ship::testInit1()
   pers->x_ = 7; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(1);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  laserDeck1->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Peter The First";
   pers->x_ = 8; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(2);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  laserDeck1->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Winston Churchill";
   pers->x_ = 2; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(6);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  laserDeck1->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "George Washington";
   pers->x_ = 3; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(7);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  laserDeck2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Nicola Tesla";
   pers->x_ = 4; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(3);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  laserDeck2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Ivan Kulibin";
   pers->x_ = 5; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(4);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  laserDeck2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Vasily Pupkin";
   pers->x_ = 6; pers->y_ = 2; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(5);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  engineControl1->assignPerson(pers);
 
   //////////////////////////////////////////////////////////////////////////
   pers = new Person();
@@ -191,42 +217,56 @@ void Ship::testInit1()
   pers->x_ = 7; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(1);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  engineControl1->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Dmitry Medvedev";
   pers->x_ = 8; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(2);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  engineControl1->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Michael Jackson";
   pers->x_ = 2; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(6);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  engineControl2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Eddy Murphy";
   pers->x_ = 3; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(7);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  engineControl2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Isaac Newton";
   pers->x_ = 4; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(3);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  engineControl2->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Bill Gates";
   pers->x_ = 5; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(4);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  electronics->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Vitaly Petrov";
   pers->x_ = 6; pers->y_ = 6; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(5);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  electronics->assignPerson(pers);
 
   //////////////////////////////////////////////////////////////////////////
   pers = new Person();
@@ -234,6 +274,8 @@ void Ship::testInit1()
   pers->x_ = 7; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(1);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  electronics->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Filipp Kirkorov";
@@ -282,6 +324,9 @@ void Ship::testInit()
   item = new Room::Item("Console", 0, 2, 1);
   weaponRoom->addItem(item);
   addRoom(weaponRoom);
+  Weapon* weap = new Weapon();
+  weap->setControlRoom(weaponRoom);
+  addWeapon(weap);
 
   Room* electonicsRoom = new WorkingRoom("Electronics", 2, 2, 2, 3);
   item = new Room::Item("Console", 0, 0, 1);
@@ -339,36 +384,48 @@ void Ship::testInit()
   pers->x_ = 0; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(1);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  weaponRoom->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Peter The First";
   pers->x_ = 1; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(2);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  weaponRoom->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Winston Churchill";
   pers->x_ = 2; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(6);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  weaponRoom->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "George Washington";
   pers->x_ = 3; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(7);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  engineControl->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Nicola Tesla";
   pers->x_ = 4; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(3);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  engineControl->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Ivan Kulibin";
   pers->x_ = 5; pers->y_ = 3; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(4);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  engineControl->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Vasily Pupkin";
@@ -453,6 +510,7 @@ void Ship::loadFromFile(CString fileName)
 
 void Ship::render()
 {
+  tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
   for (int i=0; i<width_; ++i) {
     for (int j=0; j<height_; ++j) {
       GLfloat x = i * tileWidth_;
@@ -718,7 +776,7 @@ void Ship::increaseSize()
   tileSize_ += 2;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
-  tileHeight_ = tileWidth_ * Renderer::getInstance().getAspectRatio();
+  tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
 }
 
 void Ship::decreaseSize()
@@ -726,7 +784,7 @@ void Ship::decreaseSize()
   tileSize_ -= 2;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
-  tileHeight_ = tileWidth_ * Renderer::getInstance().getAspectRatio();
+  tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
 }
 
 void Ship::timeStep()
@@ -783,6 +841,19 @@ void Ship::timeStep()
       }
     }
   }
+
+  for (auto itr = weapons_.begin(); itr != weapons_.end(); ++itr) {
+    Weapon* weapon = *itr;
+    weapon->update();
+
+    if (UUGame::getInstance().getEnemy() && weapon->fireAtWill() && weapon->getLoaded() >= 1 && weapon->getEfficiency() >= 1) {
+      UUGame::getInstance().fire(this, weapon);
+      weapon->fire();
+    }
+  }
+  if (weaponsInfo_) {
+    weaponsInfo_->update();
+  }
 }
 
 list<Room*> Ship::getRoomsByType( Room::RoomType type )
@@ -829,11 +900,13 @@ Room::~Room()
 void Room::addPerson( Person* person )
 {
   crewInRoom_.insert(person);
+  updateCrewWorking();
 }
 
 void Room::removePerson( Person* person )
 {
   crewInRoom_.erase(person);
+  updateCrewWorking();
 }
 
 bool Room::isInside( int x, int y )
@@ -916,6 +989,11 @@ void Room::detachPersonForShift( Person* pers, int shift )
     }
   }
   assert(found == 1);
+}
+
+void Room::updateCrewWorking()
+{
+
 }
 
 Tile::Tile(int texID, int x, int y, bool passible):
@@ -1200,7 +1278,7 @@ LivingRoom::~LivingRoom()
 }
 
 WorkingRoom::WorkingRoom(CString name, int left, int top, int width, int height):
-  Room(name, left, top, width, height, Working)
+  Room(name, left, top, width, height, Working), controlledDevice_(NULL)
 {
 
 }
@@ -1208,6 +1286,29 @@ WorkingRoom::WorkingRoom(CString name, int left, int top, int width, int height)
 WorkingRoom::~WorkingRoom()
 {
 
+}
+
+void WorkingRoom::updateCrewWorking()
+{
+  crewWorking_.clear();
+  int workingPeople = 0;
+  if (capacity_ == 0) {
+    return;
+  }
+  for (auto itr = crewInRoom_.begin(); itr != crewInRoom_.end(); ++itr) {
+    Person* pers = *itr;
+    if (pers->shiftRoom_ == this) {
+      crewWorking_.insert(pers);
+      ++workingPeople;
+    }
+    if (workingPeople == capacity_) {
+      break;
+    }
+  }
+  float efficiency = crewWorking_.size() / (float)capacity_;
+  if (controlledDevice_) {
+    controlledDevice_->updateEfficiency(efficiency);
+  }
 }
 
 OtherRoom::OtherRoom( CString name, int left, int top, int width, int height):
@@ -1235,4 +1336,46 @@ Room::Item::~Item()
     delete using_[i];
   }
   delete[] using_;
+}
+
+Weapon::Weapon():Device(Device::WeaponDevice), reloadSpeed_(0.001), power_(50), accuracy_(0.7), loaded_(0), fireAtWill_(true)
+{
+
+}
+
+Weapon::~Weapon()
+{
+
+}
+
+void Weapon::update()
+{
+  loaded_ += reloadSpeed_ * efficiency_;
+  if (loaded_ > 1) {
+    loaded_ = 1;
+  }
+}
+
+void Weapon::fire()
+{
+  loaded_ = 0;
+}
+
+Device::Device( DeviceType type ):type_(type), efficiency_(0)
+{
+
+}
+
+Device::~Device()
+{
+
+}
+
+void Device::setControlRoom( Room* room )
+{
+  assert(room);
+  assert (room->getType() == Room::Working);
+  WorkingRoom* workingRoom = static_cast<WorkingRoom*>(room);
+  workingRoom->setControlledDevice(this);
+  controlRoom_ = workingRoom;
 }

@@ -15,6 +15,7 @@ public:
   signal0<> sigClick;
   signal1<void*> sigClickParam;
   void setHighlighted(bool value) {highlighted_ = value;}
+  bool isHighLighted() {return highlighted_;}
 private:
   CString label_;
   void* param_;

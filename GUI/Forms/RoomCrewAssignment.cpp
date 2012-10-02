@@ -27,7 +27,7 @@ void RoomCrewAssignment::init()
 
 void RoomCrewAssignment::initLiving()
 {
-  float roomX = 0.1;
+  float roomX = 0.08;
   list<Room*> rooms = ship_->getRoomsByType(roomsType_);
   for (auto itr = rooms.begin(); itr != rooms.end(); ++itr) {
     Room* room = *itr;
@@ -56,12 +56,12 @@ void RoomCrewAssignment::initLiving()
       }
       addWidget(persPlace);
       picX += picWidth + 0.01;
-      if (picX >= roomX + 0.1 - picWidth) {
+      if (picX >= roomX + 0.15 - picWidth) {
         picX = roomX;
         picY -= picHeight + 0.03;
       }
     }
-    roomX += 0.1;
+    roomX += 0.15;
   }
 }
 
@@ -124,7 +124,7 @@ void RoomCrewAssignment::initWorking()
         }
       }
     }
-    roomX += 0.1;
+    roomX += 0.12;
   }
 }
 

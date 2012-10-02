@@ -51,6 +51,18 @@ void Controls::init()
   crewManagementButton_->setHighlighted(true);
   addWidget(crewManagementButton_);
 
+  navControlButton_ = new WButton();
+  navControlButton_->setDimensions(0.11, 0, 0.1, 0.5);
+  navControlButton_->setLabel("Navigation");
+  navControlButton_->sigClick.connect(this, &Controls::navControlClick);
+  addWidget(navControlButton_);
+
+  weaponsButton_ = new WButton();
+  weaponsButton_->setDimensions(0.21, 0, 0.1, 0.5);
+  weaponsButton_->setLabel("Weapons");
+  weaponsButton_->sigClick.connect(this, &Controls::weaponsClick);
+  addWidget(weaponsButton_);
+
   drawShipButton_ = new WButton();
   drawShipButton_->setDimensions(0.95, 0.5, 0.05, 0.5);
   drawShipButton_->setLabel("Ship");
@@ -103,7 +115,10 @@ void Controls::fasterSpeedClick()
 
 void Controls::crewManagementClick()
 {
-  crewManagementButton_->setHighlighted(UUGame::getInstance().toggleCrewManagement());
+  UUGame::getInstance().switchToCrewManagement();
+  crewManagementButton_->setHighlighted(true);
+  navControlButton_->setHighlighted(false);
+  weaponsButton_->setHighlighted(false);
 }
 
 void Controls::drawShipClick()
@@ -111,6 +126,7 @@ void Controls::drawShipClick()
   drawMapButton_->setHighlighted(false);
   drawShipButton_->setHighlighted(true);
   UUGame::getInstance().changeCentralState(UUGame::DrawShip);
+  crewManagementClick();
 }
 
 void Controls::drawMapClick()
@@ -118,4 +134,21 @@ void Controls::drawMapClick()
   drawMapButton_->setHighlighted(true);
   drawShipButton_->setHighlighted(false);
   UUGame::getInstance().changeCentralState(UUGame::DrawNavigationMap);
+  navControlClick();
+}
+
+void Controls::navControlClick()
+{
+  UUGame::getInstance().switchToNavControl();
+  navControlButton_->setHighlighted(true);
+  crewManagementButton_->setHighlighted(false);
+  weaponsButton_->setHighlighted(false);
+}
+
+void Controls::weaponsClick()
+{
+  navControlButton_->setHighlighted(false);
+  crewManagementButton_->setHighlighted(false);
+  weaponsButton_->setHighlighted(true);
+  UUGame::getInstance().switchToWeapons();
 }

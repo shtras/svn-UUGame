@@ -5,7 +5,7 @@
 
 
 Renderer::Renderer():init_(false),hInstance_(NULL),currentShip_(NULL),shipAreaX_(0.1), shipAreaY_(0.2), viewPortWidth_(0), viewPortHeight_(0),
-  shipAreaWidth_(0.7), shipAreaHeight_(0.73)
+  shipAreaWidth_(0.7), shipAreaHeight_(0.73), drawPause_(0), drawPlay_(0)
 {
 }
 
@@ -386,7 +386,14 @@ void Renderer::render()
   requestViewPort(shipAreaX_, shipAreaY_ + shipAreaHeight_, shipAreaWidth_, shipAreaHeight_);
   switch (state) {
   case UUGame::DrawShip:
-    if (currentShip_) {
+    assert (currentShip_);
+    if (UUGame::getInstance().isBattleGoing()) {
+      requestViewPort(shipAreaX_, shipAreaY_ + shipAreaHeight_, shipAreaWidth_ / 2, shipAreaHeight_);
+      currentShip_->render();
+      requestViewPort(shipAreaX_ + shipAreaWidth_/2, shipAreaY_ + shipAreaHeight_, shipAreaWidth_/2, shipAreaHeight_);
+      UUGame::getInstance().getEnemy()->render();
+      requestViewPort(shipAreaX_, shipAreaY_ + shipAreaHeight_, shipAreaWidth_, shipAreaHeight_);
+    } else {
       currentShip_->render();
     }
     break;
@@ -403,6 +410,37 @@ void Renderer::render()
   default:
     assert(0);
   }
+
+  if (drawPause_ > 0) {
+    glColor4f(1, 1, 0.5, drawPause_);
+    drawPause_ -= 0.01;
+    glDisable(GL_DEPTH_TEST);
+    glBegin(GL_POLYGON);
+    glVertex3f(0.43, 0.65, 0);
+    glVertex3f(0.43, 0.35, 0);
+    glVertex3f(0.48, 0.35, 0);
+    glVertex3f(0.48, 0.65, 0);
+    glEnd();
+    glBegin(GL_POLYGON);
+    glVertex3f(0.52, 0.65, 0);
+    glVertex3f(0.52, 0.35, 0);
+    glVertex3f(0.57, 0.35, 0);
+    glVertex3f(0.57, 0.65, 0);
+    glEnd();
+    glEnable(GL_DEPTH_TEST);
+  }
+  if (drawPlay_ > 0) {
+    glColor4f(1, 1, 0.5, drawPlay_);
+    drawPlay_ -= 0.01;
+    glDisable(GL_DEPTH_TEST);
+    glBegin(GL_POLYGON);
+    glVertex3f(0.45, 0.65, 0);
+    glVertex3f(0.45, 0.35, 0);
+    glVertex3f(0.55, 0.5, 0);
+    glEnd();
+    glEnable(GL_DEPTH_TEST);
+  }
+
   resetViewPort();
 }
 
@@ -504,9 +542,13 @@ void Renderer::initImages()
 
 bool Renderer::isWithinShipRenderArea(int& x, int& y)
 {
-  if (x >= shipAreaX_*width_ && y <= (1-shipAreaY_)*height_ && x < (shipAreaX_+shipAreaWidth_)*width_ && y > (1-shipAreaY_-shipAreaHeight_)*height_) {
+  float shipAreaWidth = shipAreaWidth_;
+  if (UUGame::getInstance().isBattleGoing() && UUGame::getInstance().getScreenState() == UUGame::DrawShip) {
+    shipAreaWidth /= 2.0;
+  }
+  if (x >= shipAreaX_*width_ && y <= (1-shipAreaY_)*height_ && x < (shipAreaX_+shipAreaWidth)*width_ && y > (1-shipAreaY_-shipAreaHeight_)*height_) {
     x -= shipAreaX_*width_;
-    x /= shipAreaWidth_;
+    x /= shipAreaWidth;
     y = height_ - y;
     y -= shipAreaY_*height_;
     y /= shipAreaHeight_;
@@ -517,5 +559,21 @@ bool Renderer::isWithinShipRenderArea(int& x, int& y)
 
 float Renderer::getDrawAreaAspect()
 {
-  return shipAreaWidth_/shipAreaHeight_*(width_/(float)height_);
+  if (UUGame::getInstance().isBattleGoing() && UUGame::getInstance().getScreenState() == UUGame::DrawShip) {
+    return shipAreaWidth_/shipAreaHeight_*(width_/(float)height_)/2.0;
+  } else {
+    return shipAreaWidth_/shipAreaHeight_*(width_/(float)height_);
+  }
+}
+
+void Renderer::setDrawPause()
+{
+  drawPlay_ = 0;
+  drawPause_ = 1;
+}
+
+void Renderer::setDrawPlay()
+{
+  drawPlay_ = 1;
+  drawPause_ = 0;
 }

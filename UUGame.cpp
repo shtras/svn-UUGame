@@ -15,7 +15,7 @@
 #include "CrewPanel.h"
 #include "HoverInfoPanel.h"
 #include "Controls.h"
-#include "Universe\Universe.h"
+#include "Universe.h"
 
 const char* Version = "0.1.0";
 
@@ -46,11 +46,12 @@ void toggleVSync()
 
 UUGame::UUGame(): paused_(true), speed_(1), calcStepLength_(0.05), dtModifier_(50),lmDown_(false),rmDown_(false),
   lmDrag_(false), rmDrag_(false), shiftPressed_(false), ship_(NULL), crewPanel_(NULL), roomPanel_(NULL), showCrewManagement_(true),
-  centralState_(DrawShip)
+  centralState_(DrawShip), navControl_(NULL), navInfo_(NULL), battleGoing_(false), enemy_(NULL), weaponsInfo_(NULL)
 {
   nonContKeys_.insert(' ');
   nonContKeys_.insert(VK_ADD);
   nonContKeys_.insert(VK_SUBTRACT);
+  nonContKeys_.insert('W');
   version_ = CString(Version) + "." + CString(BUILD_NUM) + " " + CString(BUILDSTR);
 }
 
@@ -95,7 +96,7 @@ bool UUGame::mainLoop()
   int cntToPause = 0;
 
   ship_ = new Ship();
-  ship_->testInit1();
+  ship_->testInit();
   Renderer::getInstance().setCurrentShip(ship_);
 
   Universe& universe = Universe::getUniverse();
@@ -114,9 +115,9 @@ bool UUGame::mainLoop()
   generalInfo_->init();
   layoutManager_.addLayout(generalInfo_);
 
-  Controls* controls = new Controls();
-  controls->init();
-  layoutManager_.addLayout(controls);
+  controls_ = new Controls();
+  controls_->init();
+  layoutManager_.addLayout(controls_);
 
   {
     crewPanel_ = new CrewPanel(ship_);
@@ -127,6 +128,25 @@ bool UUGame::mainLoop()
     roomPanel_->init();
     layoutManager_.addLayout(roomPanel_);
   }
+
+  navControl_ = new NavControl();
+  navControl_->init();
+  navControl_->setVisible(false);
+  layoutManager_.addLayout(navControl_);
+  universe.setNavControl(navControl_);
+
+  navInfo_ = new NavInfo();
+  navInfo_->init();
+  navInfo_->setVisible(false);
+  layoutManager_.addLayout(navInfo_);
+  universe.setNavInfo(navInfo_);
+
+  weaponsInfo_ = new WeaponsInfo();
+  weaponsInfo_->init();
+  weaponsInfo_->setVisible(false);
+  ship_->setWeaponsInfo(weaponsInfo_);
+  weaponsInfo_->setShip(ship_);
+  layoutManager_.addLayout(weaponsInfo_);
 
   while(WM_QUIT!=msg.message) {
     if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
@@ -170,6 +190,10 @@ bool UUGame::mainLoop()
             Time::getTime().increase(((speed_ < 1)?speed_:1));
             handlePressedKeys();
             ship_->timeStep();
+            if (enemy_) {
+              enemy_->timeStep();
+            }
+            universe.step();
           }
         }
         accumulator -= dt;
@@ -198,17 +222,26 @@ void UUGame::handlePressedKey(int key)
 {
   switch (key) {
   case ' ':
-    paused_ = !paused_;
+    togglePause();
     break;
   case VK_ADD:
     if (centralState_ == DrawShip) {
       ship_->increaseSize();
+      if (enemy_) {
+        enemy_->increaseSize();
+      }
     }
     break;
   case VK_SUBTRACT:
     if (centralState_ == DrawShip) {
       ship_->decreaseSize();
+      if (enemy_) {
+        enemy_->decreaseSize();
+      }
     }
+    break;
+  case 'W':
+    endBattle();
     break;
   default:
     break;
@@ -274,6 +307,9 @@ void UUGame::handleMessage(UINT message, WPARAM wParam, LPARAM lParam)
   case WM_SIZE:
     Renderer::getInstance().resize(LOWORD(lParam), HIWORD(lParam));
     break;
+  case WM_MOUSEWHEEL:
+    handleMouseEvent(message, wParam, lParam);
+    break;
   default:
     break;
   }
@@ -296,11 +332,6 @@ void UUGame::speedDown()
   } else {
     speed_ /= 2;
   }
-}
-
-void UUGame::pause()
-{
-  paused_ = !paused_;
 }
 
 bool UUGame::run()
@@ -326,6 +357,7 @@ void UUGame::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam )
     ship_->handleMouseEvent(message, fx, fy);
     break;
   case DrawNavigationMap:
+    Universe::getUniverse().handleMouseEvent(message, wParam, fx, fy);
     break;
   }
 }
@@ -366,6 +398,71 @@ void UUGame::changeCentralState( CentralScreenState state )
     break;
   default:
     assert(0);
+  }
+}
+
+void UUGame::switchToNavControl()
+{
+  navControl_->setVisible(true);
+  roomPanel_->setVisible(false);
+  crewPanel_->setVisible(false);
+  navInfo_->setVisible(true);
+  weaponsInfo_->setVisible(false);
+}
+
+void UUGame::switchToCrewManagement()
+{
+  navControl_->setVisible(false);
+  roomPanel_->setVisible(true);
+  crewPanel_->setVisible(true);
+  navInfo_->setVisible(false);
+  weaponsInfo_->setVisible(false);
+}
+
+void UUGame::switchToWeapons()
+{
+  navControl_->setVisible(false);
+  roomPanel_->setVisible(false);
+  crewPanel_->setVisible(false);
+  navInfo_->setVisible(false);
+  weaponsInfo_->setVisible(true);
+}
+
+void UUGame::startBattle(Ship* enemy)
+{
+  enemy_ = enemy;
+  battleGoing_ = true;
+  controls_->drawShipClick();
+  togglePause();
+}
+
+void UUGame::togglePause()
+{
+  paused_ = !paused_;
+  if (paused_) {
+    Renderer::getInstance().setDrawPause();
+  } else {
+    Renderer::getInstance().setDrawPlay();
+  }
+}
+
+void UUGame::endBattle()
+{
+  enemy_ = NULL;
+  battleGoing_ = false;
+}
+
+void UUGame::fire( Ship* from, Weapon* weapon )
+{
+  Ship* target = NULL;
+  if (from == ship_) {
+    assert(enemy_);
+    target = enemy_;
+    cout << "Boom!!!" << endl;
+  } else {
+    assert (from == enemy_);
+    target = ship_;
+    cout << "Enemy Boom!!!" << endl;
   }
 }
 
@@ -422,7 +519,7 @@ Time& Time::getTime()
 
 Time::Time()
 {
-  year_ = 2137;
+  year_ = 2134;
   month_ = 7;
   day_ = 14;
   hour_ = 5;
@@ -489,4 +586,9 @@ bool Time::isShift( int shift )
     return (hour_ >= 16 && hour_ < 24) || (hour_ == 15 && minute_ >= 50) || (hour_ == 0 && minute_ <= 10);
   }
   return false;
+}
+
+float Time::getYears()
+{
+  return year_ + month_/12.0 + day_/12.0/30.0 + hour_/12.0/30.0/24.0;
 }
