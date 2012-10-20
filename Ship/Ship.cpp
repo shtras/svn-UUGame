@@ -4,7 +4,8 @@
 #include "Person.h"
 #include "UUGame.h"
 
-Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0), weaponsInfo_(NULL)
+Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0), weaponsInfo_(NULL),selectedRoom_(NULL),
+  tileInfo_(NULL)
 {
   shift_ = 1;
   redShift_ = 2;
@@ -64,12 +65,12 @@ void Ship::testInit1()
   weap->setControlRoom(laserDeck3);
   addWeapon(weap);
 
-  room = new WorkingRoom("Laser deck 4", 12, 0, 2, 2);
+  WorkingRoom* laserDeck4 = new WorkingRoom("Laser deck 4", 12, 0, 2, 2);
   item = new Room::Item("Console", 0, 0, 1);
-  room->addItem(item);
-  addRoom(room);
+  laserDeck4->addItem(item);
+  addRoom(laserDeck4);
   weap = new Weapon();
-  weap->setControlRoom(room);
+  weap->setControlRoom(laserDeck4);
   addWeapon(weap);
 
   room = new LivingRoom("1st officer quarters", 2, 11, 2, 3);
@@ -282,36 +283,51 @@ void Ship::testInit1()
   pers->x_ = 8; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(2);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  laserDeck3->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Maxim Perepelitsa";
   pers->x_ = 2; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(6);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  laserDeck3->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Ivan Brovkin";
   pers->x_ = 3; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(7);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  laserDeck3->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Moshe Klausner";
   pers->x_ = 4; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(3);
   addCrewMember(pers);
+  pers->shift_ = 1;
+  laserDeck4->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Mark Fertman";
   pers->x_ = 5; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(4);
   addCrewMember(pers);
+  pers->shift_ = 2;
+  laserDeck4->assignPerson(pers);
 
   pers = new Person();
   pers->name_ = "Mark Webber";
   pers->x_ = 6; pers->y_ = 10; pers->officer_ = false; crewQuarters->assignPerson(pers); pers->workByShifts_ = true;
   pers->faceTexID_ = Renderer::getInstance().getImage(5);
   addCrewMember(pers);
+  pers->shift_ = 3;
+  laserDeck4->assignPerson(pers);
+
+  Wall* testWall = layout_->getWall(3, 0, TileLayout::Up);
+  testWall->type_ = Wall::Door;
 }
 
 void Ship::testInit()
@@ -481,11 +497,11 @@ void Ship::loadFromFile(CString fileName)
       byte tileByte[4];
       fread(tileByte, 1, 4, file);
       int texID = (tileByte[0] & 0xE0) >> 5;
-      int upWall = tileByte[0] & 7;
-      int rightWall = (tileByte[1] & 0xE0) >> 5;
-      int downWall = (tileByte[1] & 0x1C) >> 2;
-      int leftWall = (tileByte[1] & 1) << 1 | ((tileByte[2] & 0xC0) >> 7);
-      assert (upWall < Tile::BadType && rightWall < Tile::BadType && downWall < Tile::BadType && leftWall < Tile::BadType);
+      int upType = tileByte[0] & 7;
+      int rightType = (tileByte[1] & 0xE0) >> 5;
+      int downType = (tileByte[1] & 0x1C) >> 2;
+      int leftType = (tileByte[1] & 1) << 1 | ((tileByte[2] & 0xC0) >> 7);
+      assert (upType < Wall::BadType && rightType < Wall::BadType && downType < Wall::BadType && leftType < Wall::BadType);
       bool exists = (tileByte[2] & 0x40) != 0;
       bool passible = (tileByte[2] & 0x20) != 0;
       Tile* newTile = NULL;
@@ -496,10 +512,10 @@ void Ship::loadFromFile(CString fileName)
           Logger::getInstance().log(ERROR_LOG_NAME, "Texture " + textureName + " from ship file " + fileName + " was not loaded. Check previous errors for details.");
         }
         newTile = new Tile(localTexID, i, j, passible);
-        layout_->setWall(i, j, TileLayout::Down, (Tile::WallType)upWall);
-        layout_->setWall(i, j, TileLayout::Right, (Tile::WallType)rightWall);
-        layout_->setWall(i, j, TileLayout::Up, (Tile::WallType)downWall);
-        layout_->setWall(i, j, TileLayout::Left, (Tile::WallType)leftWall);
+        layout_->setWall(i, j, TileLayout::Down, new Wall((Wall::WallType)upType));
+        layout_->setWall(i, j, TileLayout::Right, new Wall((Wall::WallType)rightType));
+        layout_->setWall(i, j, TileLayout::Up, new Wall((Wall::WallType)downType));
+        layout_->setWall(i, j, TileLayout::Left, new Wall((Wall::WallType)leftType));
       }
       layout_->setTile(i, j, newTile);
     }
@@ -511,6 +527,11 @@ void Ship::loadFromFile(CString fileName)
 void Ship::render()
 {
   tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
+  float top = (1 - height_ * tileHeight_) / 2.0;
+  float left = (1 - width_ * tileWidth_) / 2.0;
+  glMatrixMode(GL_MODELVIEW);
+  glPushMatrix();
+  glTranslatef(left, top, 0);
   for (int i=0; i<width_; ++i) {
     for (int j=0; j<height_; ++j) {
       GLfloat x = i * tileWidth_;
@@ -544,15 +565,79 @@ void Ship::render()
       glEnd();
       glDisable(GL_TEXTURE_2D);
 
+      if (tile->getPressure() < 1) {
+        glColor4f(0.5, 0, 0, 0.5-tile->getPressure()*0.5);
+        glBegin(GL_POLYGON);
+        glVertex3f(0, 0, 0.1);
+        glVertex3f(tileWidth_, 0, 0.1);
+        glVertex3f(tileWidth_, tileHeight_, 0.1);
+        glVertex3f(0, tileHeight_, 0.1);
+        glEnd();
+      }
       glPopMatrix();
     }
   }
+  glDisable(GL_DEPTH_TEST);
   drawWalls();
+  if (selectedRoom_) {
+    int left = selectedRoom_->getLeft();
+    int top = selectedRoom_->getTop();
+    int width = selectedRoom_->getWidth();
+    int height = selectedRoom_->getHeight();
+    glColor3f(1, 1, 0);
+    glLineWidth(3);
+    glBegin(GL_LINE_LOOP);
+    glVertex3f(left*tileWidth_, top*tileHeight_, 0);
+    glVertex3f((left+width)*tileWidth_, top*tileHeight_, 0);
+    glVertex3f((left+width)*tileWidth_, (top+height)*tileHeight_, 0);
+    glVertex3f(left*tileWidth_, (top+height)*tileHeight_, 0);
+    glEnd();
+    glLineWidth(1);
+  }
 
   if (drawDebugPath_) {
     drawDebugPath();
   }
   drawCrew();
+  drawIcons();
+
+  glMatrixMode(GL_MODELVIEW);
+  glPopMatrix();
+  if (lasers_.size() > 0) {
+    glPushMatrix();
+    glLineWidth(4);
+    for (auto itr = lasers_.begin(); itr != lasers_.end(); ++itr) {
+      LaserBeam* beam = *itr;
+      float x0 = beam->x0*tileWidth_ + left;
+      float y0 = beam->y0*tileHeight_ + top;
+      switch (beam->direction) {
+      case TileLayout::Up:
+        y0 = 1;
+        break;
+      case TileLayout::Left:
+        x0 = 1;
+        break;
+      case TileLayout::Right:
+        x0 = 0;
+        break;
+      case TileLayout::Down:
+        y0 = 0;
+        break;
+      default:
+        assert(0);
+      }
+      float x1 = beam->x1*tileWidth_;
+      float y1 = beam->y1*tileHeight_;
+      glColor4f(1, 0.5, 0, beam->time);
+      glBegin(GL_LINES);
+      glVertex3f(x0 + tileWidth_*0.5, y0 + tileHeight_*0.5, 0.2);
+      glVertex3f(x1+left + tileWidth_*0.5, y1+top + tileHeight_*0.5, 0.2);
+      glEnd();
+    }
+    glLineWidth(1);
+    glPopMatrix();
+  }
+  glEnable(GL_DEPTH_TEST);
 }
 
 void Ship::drawDebugPath()
@@ -576,37 +661,37 @@ void Ship::drawWalls()
   for (int i=0; i<width_; ++i) {
     for (int j=0; j<height_; ++j) {
       glPushMatrix();
-      Tile::WallType rightType = layout_->getWall(i, j, TileLayout::Right);
-      if (rightType != Tile::BadType) {
+      Wall* rightWall = layout_->getWall(i, j, TileLayout::Right);
+      if (rightWall) {
         glTranslatef((i+1)*tileWidth_, j*tileHeight_, 0.1);
-        drawVerticalWall(rightType);
+        drawVerticalWall(rightWall);
       }
       glPopMatrix();
 
       glPushMatrix();
-      Tile::WallType downType = layout_->getWall(i, j, TileLayout::Down);
-      if (downType != Tile::BadType) {
+      Wall* downWall = layout_->getWall(i, j, TileLayout::Down);
+      if (downWall) {
         glTranslatef(i*tileWidth_, (j+1)*tileHeight_, 0.1);
-        drawHorizontalWall(downType);
+        drawHorizontalWall(downWall);
       }
       glPopMatrix();
 
       if (i == 0) {
         glPushMatrix();
-        Tile::WallType leftType = layout_->getWall(i, j, TileLayout::Left);
-        if (leftType != Tile::BadType) {
+        Wall* leftWall = layout_->getWall(i, j, TileLayout::Left);
+        if (leftWall) {
           glTranslatef(i*tileWidth_, j*tileHeight_, 0.1);
-          drawVerticalWall(leftType);
+          drawVerticalWall(leftWall);
         }
         glPopMatrix();
       }
 
       if (j == 0) {
         glPushMatrix();
-        Tile::WallType upType = layout_->getWall(i, j, TileLayout::Up);
-        if (upType != Tile::BadType) {
+        Wall* upWall = layout_->getWall(i, j, TileLayout::Up);
+        if (upWall) {
           glTranslatef(i*tileWidth_, j*tileHeight_, 0.1);
-          drawHorizontalWall(upType);
+          drawHorizontalWall(upWall);
         }
         glPopMatrix();
       }
@@ -614,20 +699,29 @@ void Ship::drawWalls()
   }
 }
 
-void Ship::drawVerticalWall(Tile::WallType type)
+void Ship::drawVerticalWall(Wall* wall)
 {
-  switch (type) {
-  case Tile::Empty:
+  float cond = wall->getCondition();
+  switch (wall->getType()) {
+  case Wall::Empty:
     return;
     break;
-  case Tile::Wall:
-    glColor3f(0,0,0);
+  case Wall::RegularWall:
+    glColor4f(0,0,0, cond);
     break;
-  case Tile::Door:
-    glColor3f(0,0.5,1);
+  case Wall::Door:
+    if (wall->isOpen()) {
+      glColor4f(1,0.5,0, 1);
+    } else {
+      glColor4f(0,0.5,1, cond);
+    }
     break;
-  case Tile::BlastDoor:
-    glColor3f(0,0.4,0.2);
+  case Wall::BlastDoor:
+    if (wall->isOpen()) {
+      glColor4f(0.6,0.8,0.2, 1);
+    } else {
+      glColor4f(0,0.4,0.2,cond);
+    }
     break;
   default:
     assert(0);
@@ -643,20 +737,29 @@ void Ship::drawVerticalWall(Tile::WallType type)
   glColor3f(1,1,1);
 }
 
-void Ship::drawHorizontalWall(Tile::WallType type)
+void Ship::drawHorizontalWall(Wall* wall)
 {
-  switch (type) {
-  case Tile::Empty:
+  float cond = wall->getCondition();
+  switch (wall->getType()) {
+  case Wall::Empty:
     return;
     break;
-  case Tile::Wall:
-    glColor3f(0,0,0);
+  case Wall::RegularWall:
+    glColor4f(0,0,0,cond);
     break;
-  case Tile::Door:
-    glColor3f(0,0.5,1);
+  case Wall::Door:
+    if (wall->isOpen()) {
+      glColor4f(1,0.5,0, 1);
+    } else {
+      glColor4f(0,0.5,1, cond);
+    }
     break;
-  case Tile::BlastDoor:
-    glColor3f(0,0.4,0.2);
+  case Wall::BlastDoor:
+    if (wall->isOpen()) {
+      glColor4f(0.6,0.8,0.2, 1);
+    } else {
+      glColor4f(0,0.4,0.2,cond);
+    }
     break;
   default:
     assert(0);
@@ -703,6 +806,43 @@ void Ship::drawCrew()
   }
 }
 
+void Ship::drawIcons()
+{
+  static float blink = 0.5;
+  static float dblink = 0.03;
+  for (auto itr = rooms_.begin(); itr != rooms_.end(); ++itr) {
+    Room* room = *itr;
+    if (!room->oxygenSupplied()) {
+      glPushMatrix();
+      glColor4f(1, 1, 1, blink);
+      glTranslatef(tileWidth_ * (room->getLeft() + room->getWidth()/2.0 - 0.5), tileHeight_ * (room->getTop() + room->getHeight()/2.0 - 0.5), 0);
+      glEnable(GL_TEXTURE_2D);
+      glBindTexture(GL_TEXTURE_2D, Renderer::getInstance().getIcon(0));
+      glBegin(GL_POLYGON);
+      glTexCoord2f(0,0);
+      glVertex3f(0, 0, 0);
+      glTexCoord2f(1,0);
+      glVertex3f(tileWidth_, 0, 0);
+      glTexCoord2f(1,1);
+      glVertex3f(tileWidth_, tileHeight_, 0);
+      glTexCoord2f(0,1);
+      glVertex3f(0, tileHeight_, 0);
+      glEnd();
+      glDisable(GL_TEXTURE_2D);
+      glPopMatrix();
+    }
+  }
+  blink += dblink;
+  if (blink > 1) {
+    blink = 1;
+    dblink = -dblink;
+  }
+  if (blink < 0.5) {
+    blink = 0.5;
+    dblink = -dblink;
+  }
+}
+
 void Ship::addRoom(Room* room)
 {
   for (int i=room->getLeft(); i<room->getLeft() + room->getWidth(); ++i) {
@@ -717,16 +857,22 @@ void Ship::addRoom(Room* room)
   if (room->getType() == Room::Living) {
     crewCapacity_ += room->getCapacity();
   }
+  room->setShip(this);
 }
 
-void Ship::handleMouseEvent(UINT message, float x, float y)
+void Ship::handleMouseEvent(UINT message, WPARAM wParam, float x, float y)
 {
-  int tileX = x / tileWidth_;
-  int tileY = y / tileHeight_;
-  if (tileX >= width_ || tileY >= height_) {
+  float top = (1 - height_ * tileHeight_) / 2.0;
+  float left = (1 - width_ * tileWidth_) / 2.0;
+  int tileX = (x - left) / tileWidth_;
+  int tileY = (y - top) / tileHeight_;
+  if (tileX >= width_ || tileY >= height_ || x < left || y < top) {
+    if (message == WM_LBUTTONUP) {
+      selectedRoom_ = NULL;
+    }
     hoveredRoom_ = NULL;
     hoveredTile_ = NULL;
-    roomInfo_->setRoom(NULL);
+    roomInfo_->setRoom(selectedRoom_);
     tileInfo_->setTile(NULL);
     return;
   }
@@ -734,7 +880,11 @@ void Ship::handleMouseEvent(UINT message, float x, float y)
   if (message == WM_MOUSEMOVE) {
     if (tile) {
       hoveredRoom_ = tile->getRoom();
-      roomInfo_->setRoom(hoveredRoom_);
+      if (hoveredRoom_) {
+        roomInfo_->setRoom(hoveredRoom_);
+      } else {
+        roomInfo_->setRoom(selectedRoom_);
+      }
       hoveredTile_ = tile;
       tileInfo_->setTile(hoveredTile_);
       //debugPath_ = layout_->findPath(fromTile_, tile);
@@ -746,12 +896,42 @@ void Ship::handleMouseEvent(UINT message, float x, float y)
     } else {
       hoveredRoom_ = NULL;
       hoveredTile_ = NULL;
-      roomInfo_->setRoom(NULL);
+      roomInfo_->setRoom(selectedRoom_);
       tileInfo_->setTile(NULL);
     }
   } else if (message == WM_LBUTTONUP) {
     if (tile) {
       fromTile_ = tile;
+    }
+    TileLayout::Direction dir = TileLayout::BadDirection;
+    float tx = (x - left) / tileWidth_ - tileX;
+    float ty = (y - top) / tileHeight_ - tileY;
+    if (tx > 0.8) {
+      dir = TileLayout::Right;
+    } else if (tx < 0.2) {
+      dir = TileLayout::Left;
+    } else if (ty > 0.8) {
+      dir = TileLayout::Down;
+    } else if (ty < 0.2) {
+      dir = TileLayout::Up;
+    }
+    if (dir != TileLayout::BadDirection) {
+      Wall* wall = layout_->getWall(tileX, tileY, dir);
+      if (wall && (wall->getType() == Wall::Door || wall->getType() == Wall::BlastDoor)) {
+        wall->open();
+        Tile* nextTile = layout_->getTile(tileX, tileY, dir);
+        assert(tile || nextTile);
+        if (tile) {
+          tilesToUpdate_.insert(tile);
+        }
+        if (nextTile) {
+          tilesToUpdate_.insert(nextTile);
+        }
+      } else {
+        selectedRoom_ = hoveredRoom_;
+      }
+    } else {
+      selectedRoom_ = hoveredRoom_;
     }
   }
 
@@ -773,7 +953,7 @@ void Ship::addCrewMember( Person* person )
 
 void Ship::increaseSize()
 {
-  tileSize_ += 2;
+  tileSize_ *= 1.05;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
   tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
@@ -781,7 +961,7 @@ void Ship::increaseSize()
 
 void Ship::decreaseSize()
 {
-  tileSize_ -= 2;
+  tileSize_ *= 0.95;
   int windowWidth = Renderer::getInstance().getWidth();
   tileWidth_ = (float)tileSize_ / (float)windowWidth;
   tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
@@ -846,13 +1026,31 @@ void Ship::timeStep()
     Weapon* weapon = *itr;
     weapon->update();
 
-    if (UUGame::getInstance().getEnemy() && weapon->fireAtWill() && weapon->getLoaded() >= 1 && weapon->getEfficiency() >= 1) {
+    if (UUGame::getInstance().getEnemy() && weapon->fireAtWill() && weapon->getLoaded() >= 1 && weapon->getEfficiency() > 0) {
       UUGame::getInstance().fire(this, weapon);
       weapon->fire();
     }
   }
-  if (weaponsInfo_) {
-    weaponsInfo_->update();
+  weaponsInfo_->update();
+
+  if (lasers_.size() > 0) {
+    set <LaserBeam*> toDelete;
+    for (auto itr = lasers_.begin(); itr != lasers_.end(); ++itr) {
+      LaserBeam* beam = *itr;
+      beam->time -= 0.05;
+      if (beam->time <= 0) {
+        toDelete.insert(beam);
+      }
+    }
+    for (auto itr = toDelete.begin(); itr != toDelete.end(); ++itr) {
+      LaserBeam* beam = *itr;
+      lasers_.erase(beam);
+      delete beam;
+    }
+  }
+  updateTiles();
+  if (tileInfo_ && tileInfo_->isVisible() && hoveredTile_) {
+    tileInfo_->setTile(hoveredTile_);
   }
 }
 
@@ -884,8 +1082,190 @@ list<Person*> Ship::getAssignedCrew(Room* room, int shift/* = -1*/)
   return res;
 }
 
+void Ship::sufferHit( Weapon* weapon )
+{
+  TileLayout::Direction direction = (TileLayout::Direction)(rand() % TileLayout::BadDirection);
+  int x0 = -1;
+  int y0 = -1;
+  direction = TileLayout::Left;
+  //TileLayout::Direction wallPosition;
+  switch(direction) {
+  case TileLayout::Down:
+    x0 = rand() % width_;
+    //wallPosition = TileLayout::Up;
+    break;
+  case TileLayout::Up:
+    y0 = height_;
+    x0 = rand() % width_;
+    //wallPosition = TileLayout::Down;
+    break;
+  case TileLayout::Left:
+    x0 = width_;
+    //wallPosition = TileLayout::Right;
+    y0 = rand() % height_;
+    break;
+  case TileLayout::Right:
+    y0 = rand() % height_;
+    //wallPosition = TileLayout::Left;
+    break;
+  default:
+    assert(0);
+  }
+  if (x0 > width_) {
+    x0 = width_;
+  }
+  if (y0 > height_) {
+    y0 = height_;
+  }
+  y0 = 3;
+  int x = x0;
+  int y = y0;
+  float power = weapon->getPower();
+
+  while(1) {
+    Tile* tile = layout_->getTile(x, y);
+    Wall* wall = layout_->getWall(x, y, /*wallPosition*/direction);
+    if (wall && wall->getType() != Wall::Empty && !wall->isOpen()) {
+      Tile* tileBeyondWall = layout_->getTile(x, y, direction);
+      if (tile) {
+        tilesToUpdate_.insert(tile);
+      }
+      if (tileBeyondWall) {
+        tilesToUpdate_.insert(tileBeyondWall);
+      }
+      int str = wall->getStrength();
+      float cond = wall->getCondition();
+      float wallIntegrity = str * cond;
+      float newIntegrity = wallIntegrity - power;
+      if (newIntegrity < 0) {
+        newIntegrity = 0;
+      }
+      wall->setCondition(newIntegrity/(float)str);
+      power -= wallIntegrity;
+      if (power < 0) {
+        break;
+      }
+    }
+    switch (direction) {
+    case TileLayout::Down:
+      ++y;
+      break;
+    case TileLayout::Up:
+      --y;
+      break;
+    case TileLayout::Left:
+      --x;
+      break;
+    case TileLayout::Right:
+      ++x;
+      break;
+    default:
+      assert(0);
+    }
+    if (x < 0 || x >= width_ || y < 0 || y >= height_) {
+      break;
+    }
+  }
+  LaserBeam* beam = new LaserBeam();
+  beam->x0 = x0;
+  beam->y0 = y0;
+  beam->x1 = x;
+  beam->y1 = y;
+  beam->time = 1;
+  beam->direction = direction;
+  lasers_.insert(beam);
+}
+
+void Ship::updateTiles()
+{
+  shipInfo_->setToUpdate(tilesToUpdate_.size());
+  float generatedPressure = 0.005;
+  addToUpdateSet_.clear();
+  set<Tile*> toRemove;
+  for (auto itr = tilesToUpdate_.begin(); itr != tilesToUpdate_.end(); ++itr) {
+    Tile* tile = *itr;
+    assert(tile);
+    int x = tile->getX();
+    int y = tile->getY();
+    Tile* up = layout_->getTile(x, y-1);
+    float p1 = updatePressure(tile, up, layout_->getWall(x, y, TileLayout::Up));
+    Tile* right = layout_->getTile(x+1, y);
+    float p2 = updatePressure(tile, right, layout_->getWall(x, y, TileLayout::Right));
+    Tile* left = layout_->getTile(x-1, y);
+    float p3 = updatePressure(tile, left, layout_->getWall(x, y, TileLayout::Left));
+    Tile* down = layout_->getTile(x, y+1);
+    float p4 = updatePressure(tile, down, layout_->getWall(x, y, TileLayout::Down));
+    float newPressure = (p1 + p2 + p3 + p4) / 4.0;
+    bool oxygenSupplied = (tile->getRoom() && tile->getRoom()->oxygenSupplied());
+    if (newPressure < 1 && tile->isPassible() && oxygenSupplied) {
+      float deltaPressure = 1 - newPressure;
+      if (deltaPressure > 0.1) {
+        deltaPressure = 0.1;
+      }
+      float addedPressure = 0;
+      if (deltaPressure > generatedPressure) {
+        addedPressure = generatedPressure;
+        generatedPressure = 0;
+      } else {
+        addedPressure = deltaPressure;
+        generatedPressure -= deltaPressure;
+      }
+      newPressure += addedPressure;
+    }
+    if (newPressure == tile->getPressure() && (newPressure < 0.001 || newPressure >= 0.999)) {
+      toRemove.insert(tile);
+    }
+    tile->setPressure(newPressure);
+  }
+  for (auto itr = addToUpdateSet_.begin(); itr != addToUpdateSet_.end(); ++itr) {
+    tilesToUpdate_.insert(*itr);
+  }
+  for (auto itr = toRemove.begin(); itr != toRemove.end(); ++itr) {
+    tilesToUpdate_.erase(*itr);
+  }
+}
+
+float Ship::updatePressure( Tile* fromTile, Tile* toTile, Wall* wall )
+{
+  //if (processedTiles_.count(toTile) > 0) {
+  //  return fromTile->getPressure();
+  //}
+  float toPressure = (toTile?toTile->getPressure():0);
+  float wallCondition = wall->getCondition();
+  float pressure = fromTile->getPressure();
+  assert (wallCondition <= 1);
+  if (pressure != toPressure && wallCondition < 1) {
+    float diff = toPressure - pressure;
+    diff *= (1-wallCondition);
+    if (toTile) {
+      addToUpdateSet_.insert(toTile);
+    }
+    return pressure + diff;
+  }
+  return pressure;
+}
+
+void Ship::setTileWidth( float val )
+{
+  tileWidth_ = val;
+  tileHeight_ = tileWidth_ * Renderer::getInstance().getDrawAreaAspect();
+}
+
+void Ship::setAllFireAtWill( bool value )
+{
+  for (auto itr = weapons_.begin(); itr != weapons_.end(); ++itr) {
+    Weapon* weapon = *itr;
+    weapon->setFireAtWill(value);
+  }
+}
+
+void Ship::addTileToUpdate( Tile* tile )
+{
+  tilesToUpdate_.insert(tile);
+}
+
 Room::Room(CString name, int left, int top, int width, int height, RoomType type):
-  name_(name), top_(top), left_(left), width_(width), height_(height), type_(type),capacity_(0)
+  name_(name), top_(top), left_(left), width_(width), height_(height), type_(type),capacity_(0),oxygenSupplied_(true),ship_(NULL)
 {
 
 }
@@ -996,10 +1376,20 @@ void Room::updateCrewWorking()
 
 }
 
-Tile::Tile(int texID, int x, int y, bool passible):
-  texId_(texID), x_(x), y_(y), passible_(passible), room_(NULL)
+void Room::setOxygenSupply( bool value )
 {
+  oxygenSupplied_ = value;
+  for (auto itr = tiles_.begin(); itr != tiles_.end(); ++itr) {
+    ship_->addTileToUpdate(*itr);
+  }
+}
 
+Tile::Tile(int texID, int x, int y, bool passible):
+  texId_(texID), x_(x), y_(y), passible_(passible), room_(NULL), pressure_(1)
+{
+  if (!passible) {
+    pressure_ = 0;
+  }
 }
 
 Tile::~Tile()
@@ -1007,14 +1397,25 @@ Tile::~Tile()
   
 }
 
+void Tile::setPressure( float val )
+{
+  if (val > 0.999) {
+    val = 1;
+  }
+  if (val < 0.001) {
+    val = 0;
+  }
+  pressure_ = val;
+}
+
 TileLayout::TileLayout( int width, int height )
 {
   width_ = width;
   height_ = height;
   tiles_ = new Tile*[width*height];
-  walls_ = new Tile::WallType[(width*2+1)*(height*2+1)];
+  walls_ = new Wall*[(width*2+1)*(height*2+1)];
   for (int i=0; i<(width*2+1)*(height*2+1); ++i) {
-    walls_[i] = Tile::BadType;
+    walls_[i] = NULL;
   }
   pathFindArea_ = new int[width*height];
   resetPathFindArea();
@@ -1029,8 +1430,28 @@ TileLayout::~TileLayout()
 
 Tile* TileLayout::getTile( int x, int y )
 {
+  if (x < 0 || y < 0 || x >= width_ || y >= height_) {
+    return NULL;
+  }
   assert (x < width_ && y < height_);
   return tiles_[y*width_ + x];
+}
+
+Tile* TileLayout::getTile( int x, int y, Direction dir )
+{
+  switch (dir) {
+  case Up:
+    return getTile(x, y-1);
+  case Right:
+    return getTile(x+1, y);
+  case Down:
+    return getTile(x, y+1);
+  case Left:
+    return getTile(x-1, y);
+  default:
+    assert(0);
+  }
+  return NULL;
 }
 
 void TileLayout::setTile( int x, int y, Tile* tile )
@@ -1039,9 +1460,42 @@ void TileLayout::setTile( int x, int y, Tile* tile )
   tiles_[y*width_ + x] = tile;
 }
 
-Tile::WallType TileLayout::getWall( int x, int y, Direction dir )
+TileLayout::Direction TileLayout::reverseDirection(Direction dir)
 {
-  assert (x < width_ && y < height_ && dir < BadDirection);
+  switch (dir) {
+  case Up:
+    return Down;
+  case Right:
+    return Left;
+  case Down:
+    return  Up;
+  case Left:
+    return Right;
+  default:
+    assert(0);
+    return BadDirection;
+  }
+}
+
+Wall* TileLayout::getWall( int x, int y, Direction dir )
+{
+  if (x == -1) {
+    x = 0;
+    dir = reverseDirection(dir);
+  }
+  if (y == -1) {
+    y = 0;
+    dir = reverseDirection(dir);
+  }
+  if (x == width_) {
+    --x;
+    dir = reverseDirection(dir);
+  }
+  if (y == height_) {
+    --y;
+    dir = reverseDirection(dir);
+  }
+  assert (x < width_ && y < height_ && x >= 0 && y >= 0 && dir < BadDirection);
   switch (dir) {
   case Up:
     return getWallByCoords(x*2+1, y*2);
@@ -1053,40 +1507,44 @@ Tile::WallType TileLayout::getWall( int x, int y, Direction dir )
     return getWallByCoords(x*2, y*2+1);
   }
   assert(0);
-  return Tile::BadType;
+  return NULL;
 }
 
-void TileLayout::setWall( int x, int y, Direction dir, Tile::WallType type )
+void TileLayout::setWall(int x, int y, Direction dir, Wall* wall)
 {
-  assert (x < width_ && y < height_ && dir < BadDirection);
+  assert (x < width_ && y < height_ && x >= 0 && y >= 0 && dir < BadDirection);
   switch (dir) {
   case Up:
-    setWallByCoords(x*2+1, y*2, type);
+    setWallByCoords(x*2+1, y*2, wall);
     break;
   case Right:
-    setWallByCoords(x*2+2, y*2+1, type);
+    setWallByCoords(x*2+2, y*2+1, wall);
     break;
   case Down:
-    setWallByCoords(x*2+1, y*2+2, type);
+    setWallByCoords(x*2+1, y*2+2, wall);
     break;
   case Left:
-    setWallByCoords(x*2, y*2+1, type);
+    setWallByCoords(x*2, y*2+1, wall);
     break;
   default:
     assert(0);
   }
 }
 
-Tile::WallType TileLayout::getWallByCoords(int x, int y)
+Wall* TileLayout::getWallByCoords(int x, int y)
 {
   assert ((x%2 == 0 && y%2 != 0) || (x%2 != 0 && y%2 == 0));
   return walls_[y*(width_*2+1) + x];
 }
 
-void TileLayout::setWallByCoords( int x, int y, Tile::WallType type )
+void TileLayout::setWallByCoords( int x, int y, Wall* wall )
 {
   assert ((x%2 == 0 && y%2 != 0) || (x%2 != 0 && y%2 == 0));
-  walls_[y*(width_*2+1) + x] = type;
+  if (walls_[y*(width_*2+1) + x]) {
+    assert(walls_[y*(width_*2+1) + x]->getType() == wall->getType());
+    delete walls_[y*(width_*2+1) + x];
+  }
+  walls_[y*(width_*2+1) + x] = wall;
 }
 
 void TileLayout::fillAStar( int x, int y, int val )
@@ -1101,26 +1559,26 @@ void TileLayout::fillAStar( int x, int y, int val )
     return;
   }
   setPF(x, y, val);
-  Tile::WallType upWall = getWall(x, y, Up);
-  int upPrice = getWallPrice(upWall);
+  Wall* upWall = getWall(x, y, Up);
+  int upPrice = getWallPrice(upWall->getType());
   if (upPrice < INT_MAX) {
     fillAStar(x, y-1, val + upPrice);
   }
 
-  Tile::WallType rightWall = getWall(x, y, Right);
-  int rightPrice = getWallPrice(rightWall);
+  Wall* rightWall = getWall(x, y, Right);
+  int rightPrice = getWallPrice(rightWall->getType());
   if (rightPrice < INT_MAX) {
     fillAStar(x+1, y, val + rightPrice);
   }
 
-  Tile::WallType downWall = getWall(x, y, Down);
-  int downPrice = getWallPrice(downWall);
+  Wall* downWall = getWall(x, y, Down);
+  int downPrice = getWallPrice(downWall->getType());
   if (downPrice < INT_MAX) {
     fillAStar(x, y+1, val + downPrice);
   }
 
-  Tile::WallType leftWall = getWall(x, y, Left);
-  int leftPrice = getWallPrice(leftWall);
+  Wall* leftWall = getWall(x, y, Left);
+  int leftPrice = getWallPrice(leftWall->getType());
   if (leftPrice < INT_MAX) {
     fillAStar(x-1, y, val + leftPrice);
   }
@@ -1198,25 +1656,34 @@ list<Tile*> TileLayout::getFinalPath( Tile* from, Tile* to )
     int val = getPF(x, y) - 1;
     int maxVal = val + 1;
     nextTile = NULL;
-    if (getWallPrice(getWall(x, y, Up)) < INT_MAX) {
+    Wall* wall = NULL;
+    wall = getWall(x, y, Up);
+    assert(wall);
+    if (getWallPrice(wall->getType()) < INT_MAX) {
       if (getPF(x, y-1) < maxVal) {
         maxVal = getPF(x, y-1);
         nextTile = getTile(x, y-1);
       }
     }
-    if (getWallPrice(getWall(x, y, Right)) < INT_MAX) {
+    wall = getWall(x, y, Right);
+    assert(wall);
+    if (getWallPrice(wall->getType()) < INT_MAX) {
       if (getPF(x+1, y) < maxVal) {
         maxVal = getPF(x+1, y);
         nextTile = getTile(x+1, y);
       }
     }
-    if (getWallPrice(getWall(x, y, Down)) < INT_MAX) {
+    wall = getWall(x, y, Down);
+    assert(wall);
+    if (getWallPrice(wall->getType()) < INT_MAX) {
       if (getPF(x, y+1) < maxVal) {
         maxVal = getPF(x, y+1);
         nextTile = getTile(x, y+1);
       }
     }
-    if (getWallPrice(getWall(x, y, Left)) < INT_MAX) {
+    wall = getWall(x, y, Left);
+    assert(wall);
+    if (getWallPrice(wall->getType()) < INT_MAX) {
       if (getPF(x-1, y) < maxVal) {
         maxVal = getPF(x-1, y);
         nextTile = getTile(x-1, y);
@@ -1248,16 +1715,16 @@ void TileLayout::setPF( int x, int y, int val )
   pathFindArea_[y*width_ + x] = val;
 }
 
-int TileLayout::getWallPrice( Tile::WallType type )
+int TileLayout::getWallPrice( Wall::WallType type )
 {
   switch(type) {
-  case Tile::Empty:
+  case Wall::Empty:
     return 1;
-  case Tile::Wall:
+  case Wall::RegularWall:
     return INT_MAX;
-  case Tile::Door:
+  case Wall::Door:
     return 6;
-  case Tile::BlastDoor:
+  case Wall::BlastDoor:
     return 1;
   default:
     assert(0);
@@ -1338,7 +1805,7 @@ Room::Item::~Item()
   delete[] using_;
 }
 
-Weapon::Weapon():Device(Device::WeaponDevice), reloadSpeed_(0.001), power_(50), accuracy_(0.7), loaded_(0), fireAtWill_(true)
+Weapon::Weapon():Device(Device::WeaponDevice), reloadSpeed_(0.005), power_(5), accuracy_(0.7), loaded_(0), fireAtWill_(false)
 {
 
 }
@@ -1378,4 +1845,36 @@ void Device::setControlRoom( Room* room )
   WorkingRoom* workingRoom = static_cast<WorkingRoom*>(room);
   workingRoom->setControlledDevice(this);
   controlRoom_ = workingRoom;
+}
+
+Wall::Wall( WallType type ):type_(type), open_(false)
+{
+  if (type == Empty) {
+    strength_ = 0;
+    condition_ = 0;
+  } else {
+    strength_ = 100;
+    condition_ = 1;
+  }
+}
+
+Wall::~Wall()
+{
+
+}
+
+void Wall::open()
+{
+  if (type_ != Door && type_ != BlastDoor) {
+    return;
+  }
+  open_ = !open_;
+}
+
+float Wall::getCondition()
+{
+  if (open_) {
+    return 0;
+  }
+  return condition_;
 }

@@ -38,6 +38,7 @@ void HoverInfoShipPanel::init()
   addTab("Ship Info", shipInfo);
   shipInfo->init();
   manager_->addLayout(shipInfo);
+  ship_->setShipInfo(shipInfo);
 
   setActiveTab("Room Info");
 }

@@ -9,6 +9,7 @@ public:
   ~Controls();
   void init();
   void drawShipClick();
+  void weaponsClick();
 private:
   WButton* slowSpeedButton_;
   WButton* normalSpeedButton_;
@@ -27,7 +28,6 @@ private:
   void fasterSpeedClick();
   void crewManagementClick();
   void navControlClick();
-  void weaponsClick();
 
   void drawMapClick();
 };

@@ -538,6 +538,11 @@ void Renderer::initImages()
       Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load " + name);
     }
   }
+
+  res = loadBMP("res/icons/o2.bmp", &icons_[0]);
+  if (!res) {
+    Logger::getInstance().log(ERROR_LOG_NAME, "Cannot load res/icons/o2.bmp");
+  }
 }
 
 bool Renderer::isWithinShipRenderArea(int& x, int& y)

@@ -30,6 +30,7 @@ public:
   float getAspectRatio();
   bool isWithinShipRenderArea(int& x, int& y);
   GLuint getImage(int i) {return images_[i];}
+  GLuint getIcon(int i) {return icons_[i];}
   float getDrawAreaAspect();
   void setDrawPause();
   void setDrawPlay();
@@ -49,6 +50,7 @@ private:
   bool customViewPort_;
   GLuint tileTextures_[255];
   GLuint images_[255];
+  GLuint icons_[255];
   map <CString, int> tileTextureMap_;
   Ship* currentShip_;
   float shipAreaX_;

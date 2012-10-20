@@ -5,12 +5,33 @@
 #include "Universe.h"
 #include "StarSystem.h"
 #include "WeaponsInfo.h"
+#include "ShipInfo.h"
 
 class Person;
 class TileLayout;
 class Tile;
 class Device;
 class Weapon;
+
+class Wall
+{
+  friend class Ship;
+public:
+  enum WallType{Empty = 0, RegularWall, Door, BlastDoor, BadType};
+  Wall(WallType type);
+  ~Wall();
+  WallType getType() {return type_;}
+  int getStrength() {return strength_;}
+  float getCondition();
+  void setCondition(float condition) {condition_ = condition;}
+  void open();
+  bool isOpen() {return open_;}
+private:
+  WallType type_;
+  int strength_;
+  float condition_;
+  bool open_;
+};
 
 class Room
 {
@@ -52,6 +73,9 @@ public:
   void detachPerson(Person* pers);
   void addItem(Item* item);
   const list<Item*>& getItems() {return items_;}
+  bool oxygenSupplied() {return oxygenSupplied_;}
+  void setOxygenSupply(bool value);
+  void setShip(Ship* ship) {assert(!ship_);ship_ = ship;}
 protected:
   Room::Item* assignPersonForShift(Person* pers, int shift);
   void detachPersonForShift(Person* pers, int shift);
@@ -67,12 +91,14 @@ protected:
   int capacity_;
   list<Item*> items_;
   set<Person*> crewWorking_;
+  bool oxygenSupplied_;
+  Ship* ship_;
 };
 
 class Tile
 {
 public:
-  enum WallType {Empty = 0, Wall, Door, BlastDoor, BadType};
+  //enum WallType {Empty = 0, Wall, Door, BlastDoor, BadType};
   Tile(int texID, int x, int y, bool passible);
   ~Tile();
   int getTexID() {return texId_;}
@@ -81,12 +107,15 @@ public:
   int getX() {return x_;}
   int getY() {return y_;}
   bool isPassible() {return passible_;}
+  float getPressure() {return pressure_;}
+  void setPressure(float val);
 private:
   int texId_;
   bool passible_;
   int x_;
   int y_;
   Room* room_;
+  float pressure_;
 };
 
 class Ship
@@ -101,9 +130,11 @@ public:
   void addRoom(Room* room);
   float getTileWidth() {return tileWidth_;}
   float getTileHeight() {return tileHeight_;}
-  void handleMouseEvent(UINT message, float x, float y);
+  void setTileWidth(float val);
+  void handleMouseEvent(UINT message, WPARAM wParam, float x, float y);
   void setRoomInfo(RoomInfo* roomInfo) {roomInfo_ = roomInfo;}
   void setTileInfo(TileInfo* tileInfo) {tileInfo_ = tileInfo;}
+  void setShipInfo(ShipInfo* shipInfo) {shipInfo_ = shipInfo;}
   void addCrewMember(Person* person);
   void increaseSize();
   void decreaseSize();
@@ -117,12 +148,18 @@ public:
   void addWeapon(Weapon* weapon) {weapons_.push_back(weapon);}
   const list<Weapon*>& getWeapons() {return weapons_;}
   void setWeaponsInfo(WeaponsInfo* info) {weaponsInfo_ = info;}
+  void sufferHit(Weapon* weapon);
+  void setAllFireAtWill(bool value);
+  void addTileToUpdate(Tile* tile);
 private:
   void drawWalls();
-  void drawVerticalWall(Tile::WallType type);
-  void drawHorizontalWall(Tile::WallType type);
+  void drawVerticalWall(Wall* wall);
+  void drawHorizontalWall(Wall* wall);
   void drawDebugPath();
   void drawCrew();
+  void drawIcons();
+  void updateTiles();
+  float updatePressure(Tile* fromTile, Tile* toTile, Wall* wall);
   int width_;
   int height_;
   list<Room*> rooms_;
@@ -131,22 +168,41 @@ private:
   GLfloat tileWidth_;
   GLfloat tileHeight_;
 
+  ShipInfo* shipInfo_;
   RoomInfo* roomInfo_;
   TileInfo* tileInfo_;
   WeaponsInfo* weaponsInfo_;
   Room* hoveredRoom_;
   Tile* hoveredTile_;
+  Room* selectedRoom_;
 
   Tile* fromTile_;
   list<Tile*> debugPath_;
   bool drawDebugPath_;
   list <Person*> crew_;
-  int tileSize_;
+  float tileSize_;
   int shift_;
   int redShift_;
   PersonInfoFloating* floatingInfo_;
   int crewCapacity_;
   list<Weapon*> weapons_;
+  struct Explosion {
+    int x;
+    int y;
+    float time;
+  };
+  struct LaserBeam {
+    float x0;
+    float y0;
+    float x1;
+    float y1;
+    float time;
+    int direction;
+  };
+  set<Explosion*> explosions_;
+  set<LaserBeam*> lasers_;
+  set<Tile*> tilesToUpdate_;
+  set<Tile*> addToUpdateSet_;
 };
 
 class LivingRoom: public Room
@@ -203,6 +259,8 @@ public:
   void setFireAtWill(bool value) {fireAtWill_ = value;}
   bool fireAtWill() {return fireAtWill_;}
   void fire();
+  float getAccuracy() {return accuracy_;}
+  int getPower() {return power_;}
 private:
   float reloadSpeed_;
   int power_;
@@ -224,27 +282,29 @@ class TileLayout
        w0,4      w1,4      w2,4
   */
 public:
-  enum Direction {Up, Right, Down, Left, BadDirection};
+  enum Direction {Up = 0, Right, Down, Left, BadDirection};
   TileLayout(int width, int height);
   ~TileLayout();
   Tile* getTile(int x, int y);
   void setTile(int x, int y, Tile* tile);
-  Tile::WallType getWall(int x, int y, Direction dir);
-  void setWall(int x, int y, Direction dir, Tile::WallType type);
+  Tile* getTile(int x, int y, Direction dir);
+  Wall* getWall(int x, int y, Direction dir);
+  void setWall(int x, int y, Direction dir, Wall* wall);
   list<Tile*> findPath(Tile* from, Tile* to);
   list<Tile*> findPath(Tile* from, Room* to);
 private:
-  Tile::WallType getWallByCoords(int x, int y);
-  void setWallByCoords(int x, int y, Tile::WallType type);
+  Direction reverseDirection(Direction dir);
+  Wall* getWallByCoords(int x, int y);
+  void setWallByCoords(int x, int y, Wall* wall);
   void resetPathFindArea();
   int getPF(int x, int y);
   void setPF(int x, int y, int val);
   void fillAStar(int x, int y, int val);
-  int getWallPrice(Tile::WallType type);
+  int getWallPrice(Wall::WallType type);
   list<Tile*> getFinalPath(Tile* from, Tile* to);
   int width_;
   int height_;
   Tile** tiles_;
-  Tile::WallType* walls_;
+  Wall** walls_;
   int* pathFindArea_;
 };

@@ -13,6 +13,8 @@ public:
   void init();
   void setRoom(Room* room);
 private:
+  void oxygenButtonClick();
   WText* roomName_;
   Room* selectedRoom_;
+  WButton* oxygenButton_;
 };

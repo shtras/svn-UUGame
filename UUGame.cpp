@@ -17,7 +17,8 @@
 #include "Controls.h"
 #include "Universe.h"
 
-const char* Version = "0.1.0";
+//upgraded to 0.1.1 at build #1179
+const char* Version = "0.1.1";
 
 //#define MULTITHREAD_RUN
 
@@ -52,6 +53,8 @@ UUGame::UUGame(): paused_(true), speed_(1), calcStepLength_(0.05), dtModifier_(5
   nonContKeys_.insert(VK_ADD);
   nonContKeys_.insert(VK_SUBTRACT);
   nonContKeys_.insert('W');
+  nonContKeys_.insert('Q');
+  nonContKeys_.insert('E');
   version_ = CString(Version) + "." + CString(BUILD_NUM) + " " + CString(BUILDSTR);
 }
 
@@ -79,6 +82,7 @@ bool UUGame::mainLoop()
   int frame = 0;
   long timebase=GetTickCount();
   long currentTime = GetTickCount();
+  srand(timebase);
   long time;
 
   double accumulator = 0.0f;
@@ -96,7 +100,7 @@ bool UUGame::mainLoop()
   int cntToPause = 0;
 
   ship_ = new Ship();
-  ship_->testInit();
+  ship_->testInit1();
   Renderer::getInstance().setCurrentShip(ship_);
 
   Universe& universe = Universe::getUniverse();
@@ -147,6 +151,10 @@ bool UUGame::mainLoop()
   ship_->setWeaponsInfo(weaponsInfo_);
   weaponsInfo_->setShip(ship_);
   layoutManager_.addLayout(weaponsInfo_);
+
+  char cfps[200];
+  sprintf(cfps, "%s.%d %s", Version, BUILD_NUM, BUILDSTR);
+  SetWindowTextA(Renderer::getInstance().getHwnd(), (LPCSTR)(cfps));
 
   while(WM_QUIT!=msg.message) {
     if (PeekMessage(&msg,NULL,0,0,PM_REMOVE)) {
@@ -204,9 +212,10 @@ bool UUGame::mainLoop()
         double fps = frame*1000.0/(time-timebase);
         timebase = time;
         frame = 0;
-        char cfps[200];
-        sprintf(cfps, "%s.%d %s FPS: %.lf %s", Version, BUILD_NUM, BUILDSTR, fps, (paused_)?"Paused":"Running");
-        SetWindowTextA(Renderer::getInstance().getHwnd(), (LPCSTR)(cfps));
+        generalInfo_->setFPS(fps);
+        //char cfps[200];
+        //sprintf(cfps, "%s.%d %s FPS: %.lf %s", Version, BUILD_NUM, BUILDSTR, fps, (paused_)?"Paused":"Running");
+        //SetWindowTextA(Renderer::getInstance().getHwnd(), (LPCSTR)(cfps));
       }
 
       Renderer::getInstance().render();
@@ -243,6 +252,15 @@ void UUGame::handlePressedKey(int key)
   case 'W':
     endBattle();
     break;
+  case 'Q':
+    if (enemy_) {
+      enemy_->setAllFireAtWill(true);
+    }
+    break;
+  case 'E':
+    if (enemy_) {
+      enemy_->setAllFireAtWill(false);
+    }
   default:
     break;
   }
@@ -308,7 +326,16 @@ void UUGame::handleMessage(UINT message, WPARAM wParam, LPARAM lParam)
     Renderer::getInstance().resize(LOWORD(lParam), HIWORD(lParam));
     break;
   case WM_MOUSEWHEEL:
-    handleMouseEvent(message, wParam, lParam);
+    if (!layoutManager_.handleMessage(message, wParam, lParam)) {
+      if (GET_WHEEL_DELTA_WPARAM(wParam) > 0) {
+        ship_->increaseSize();
+      } else {
+        ship_->decreaseSize();
+      }
+      if (enemy_) {
+        enemy_->setTileWidth(ship_->getTileWidth());
+      }
+    }
     break;
   default:
     break;
@@ -354,7 +381,7 @@ void UUGame::handleMouseEvent(UINT message, WPARAM wParam, LPARAM lParam )
   float fy = y / (float)Renderer::getInstance().getHeight();
   switch(centralState_) {
   case DrawShip:
-    ship_->handleMouseEvent(message, fx, fy);
+    ship_->handleMouseEvent(message, wParam, fx, fy);
     break;
   case DrawNavigationMap:
     Universe::getUniverse().handleMouseEvent(message, wParam, fx, fy);
@@ -431,8 +458,10 @@ void UUGame::switchToWeapons()
 void UUGame::startBattle(Ship* enemy)
 {
   enemy_ = enemy;
+  enemy_->setTileWidth(ship_->getTileWidth());
   battleGoing_ = true;
   controls_->drawShipClick();
+  controls_->weaponsClick();
   togglePause();
 }
 
@@ -458,11 +487,20 @@ void UUGame::fire( Ship* from, Weapon* weapon )
   if (from == ship_) {
     assert(enemy_);
     target = enemy_;
-    cout << "Boom!!!" << endl;
+    cout << "Boom!!! ";
+    enemy_->sufferHit(weapon);
   } else {
     assert (from == enemy_);
     target = ship_;
-    cout << "Enemy Boom!!!" << endl;
+    cout << "Enemy Boom!!! ";
+    ship_->sufferHit(weapon);
+  }
+  float accuracy = weapon->getAccuracy();
+  float toHit = getRandom(1);
+  if (accuracy > toHit) {
+    cout << "Hit!" << endl;
+  } else {
+    cout << "Miss!" << endl;
   }
 }
 

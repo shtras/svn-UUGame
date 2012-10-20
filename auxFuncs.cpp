@@ -172,3 +172,8 @@ void drawCircle(float radius, bool filled, int segments/* = 36*/)
   }
   glEnd();
 }
+
+float getRandom( float cap )
+{
+  return rand() / (float)RAND_MAX * cap;
+}

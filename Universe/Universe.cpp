@@ -122,7 +122,11 @@ void Universe::step()
     }
     break;
   case PlottingCourse:
-    progress_ += 0.01;
+    progress_ += 0.11;
+    orbitAngle_ += 0.01;
+    if (orbitAngle_ > 2*PI) {
+      orbitAngle_ = 0;
+    }
     if (progress_ > 1) {
       progress_ = 1;
       navControl_->setCoursePlotted();
@@ -130,7 +134,7 @@ void Universe::step()
     break;
   case Traveling:
     assert(destinationPlanet_);
-    progress_ += 0.01;
+    progress_ += 0.11;
     x_ = travelFromX_ * (1-progress_) + destinationPlanet_->getX() * progress_;
     y_ = travelFromY_ * (1-progress_) + destinationPlanet_->getY() * progress_;
     navInfo_->setDestination(selectedPlanet_);
@@ -142,7 +146,7 @@ void Universe::step()
       y_ = destinationPlanet_->getY();
       if (destinationPlanet_->getName() == "Guppy") {
         Ship* enemy = new Ship();
-        enemy->testInit1();
+        enemy->testInit();
         UUGame::getInstance().startBattle(enemy);
       }
       if (selectedPlanet_ == destinationPlanet_) {

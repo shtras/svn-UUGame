@@ -19,13 +19,17 @@ void GeneralInfo::init()
   visible_ = true;
 
   timeText_ = new WText();
-  timeText_->setDimensions(0.1, 0.1, 1, 1);
+  timeText_->setDimensions(0.02, 0.1, 1, 1);
   addWidget(timeText_);
   timeText_->setText("Clock");
 
   shiftText_ = new WText();
-  shiftText_->setDimensions(0.7, 0.1, 1, 1);
+  shiftText_->setDimensions(0.4, 0.1, 1, 1);
   addWidget(shiftText_);
+
+  fpsText_ = new WText();
+  fpsText_->setDimensions(0.6, 0.1, 1, 1);
+  addWidget(fpsText_);
 }
 
 void GeneralInfo::update()
@@ -37,4 +41,9 @@ void GeneralInfo::update()
 
   int shift = time.getShift();
   shiftText_->setText("Shift: " + CString(shift));
+}
+
+void GeneralInfo::setFPS( float val )
+{
+  fpsText_->setText("FPS: " + CString(val, 2));
 }

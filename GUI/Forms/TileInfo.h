@@ -15,4 +15,5 @@ private:
   Tile* tile_;
   WText* coordText_;
   WText* itemText_;
+  WText* airText_;
 };

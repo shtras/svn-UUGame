@@ -22,3 +22,5 @@ vector<CString> getFileNames(CString dir);
 float getSquareWidthForHeightInLayout(float height, WLayout* layout);
 
 void drawCircle(float radius, bool filled, int segments = 36);
+
+float getRandom(float cap);

@@ -22,6 +22,10 @@ void TileInfo::init()
   itemText_ = new WText();
   itemText_->setDimensions(0.1, 0.8, 1, 1);
   addWidget(itemText_);
+
+  airText_ = new WText();
+  airText_->setDimensions(0.1, 0.7, 1, 1);
+  addWidget(airText_);
 }
 
 void TileInfo::setTile( Tile* tile )
@@ -30,9 +34,12 @@ void TileInfo::setTile( Tile* tile )
   if (!tile) {
     coordText_->setText("No tile selected");
     itemText_->setText("No items");
+    airText_->setText("");
     return;
   }
   coordText_->setText(CString(tile->getX()) + ", " + CString(tile->getY()));
+  airText_->setText(CString(tile->getPressure()*100) + "% oxygen");
+
   if (!tile->getRoom()) {
     itemText_->setText("No items");
     return;
