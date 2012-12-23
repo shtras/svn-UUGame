@@ -40,6 +40,7 @@ public:
   void endBattle();
   bool isBattleGoing() {return battleGoing_;}
   void togglePause();
+  void setPause();
   Ship* getEnemy() {return enemy_;}
   void fire(Ship* from, Weapon* weapon);
 private:

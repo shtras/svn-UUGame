@@ -14,4 +14,8 @@ private:
   WText* livingText_;
   WText* workingText_;
   WText* shiftText_;
+  WText* actionText_;
+  WText* hpText_;
+  WText* staminaText_;
+  WText* hungerText_;
 };

@@ -168,14 +168,14 @@ bool UUGame::mainLoop()
       if ((delta > lastDelta)) {
         cntToPause++;
         if (cntToPause > 3) {
-          paused_ = true;
+          setPause();
           cntToPause = 0;
         }
       } else {
         cntToPause = 0;
       }
       if (delta > 100) {
-        paused_ = true;
+        setPause();
       }
       currentTime = time;
       accumulator += delta;
@@ -473,6 +473,12 @@ void UUGame::togglePause()
   } else {
     Renderer::getInstance().setDrawPlay();
   }
+}
+
+void UUGame::setPause()
+{
+  paused_ = true;
+  Renderer::getInstance().setDrawPause();
 }
 
 void UUGame::endBattle()

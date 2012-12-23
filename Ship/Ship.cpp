@@ -5,7 +5,7 @@
 #include "UUGame.h"
 
 Ship::Ship():layout_(NULL),hoveredRoom_(NULL),roomInfo_(NULL), hoveredTile_(NULL), fromTile_(NULL), drawDebugPath_(false), crewCapacity_(0), weaponsInfo_(NULL),selectedRoom_(NULL),
-  tileInfo_(NULL)
+  tileInfo_(NULL),shipInfo_(NULL)
 {
   shift_ = 1;
   redShift_ = 2;
@@ -26,6 +26,7 @@ Ship::~Ship()
 void Ship::testInit1()
 {
   loadFromFile("stark.rrm");
+  assert(layout_);
   Room* room = NULL;
   Room::Item* item = NULL;
 
@@ -939,6 +940,7 @@ void Ship::handleMouseEvent(UINT message, WPARAM wParam, float x, float y)
 
 void Ship::addCrewMember( Person* person )
 {
+  person->ship_ = this;
   crew_.push_back(person);
   int x = person->x_;
   int y = person->y_;
@@ -972,54 +974,12 @@ void Ship::timeStep()
   Time& time = Time::getTime();
   int hour = time.getHour();
 
-  //if (hour >= 0 && hour < 8) {
-  //  shift_ = 1;
-  //  redShift_ = 2;
-  //} else if (hour >= 8 && hour < 16) {
-  //  shift_ = 2;
-  //  redShift_ = 3;
-  //} else if (hour >= 16 && hour < 24) {
-  //  shift_ = 3;
-  //  redShift_ = 1;
-  //} else {
-  //  assert(0);
-  //}
-
   shift_ = time.getShift();
 
   for (auto itr=crew_.begin(); itr != crew_.end(); ++itr) {
     Person* person = *itr;
-    person->pathStep();
+    person->timeStep();
 
-    int x = person->x_;
-    int y = person->y_;
-    Tile* tile = layout_->getTile(x,y);
-
-    if (person->currentPath_.size() == 0 && person->workByShifts_) {
-      if (!time.isShift(person->shift_)) {
-        if (person->living_ && !person->living_->isInside(x, y)) {
-          person->currentPath_ = layout_->findPath(layout_->getTile(x, y), person->living_);
-        } else if (person->living_ && person->living_->isInside(x, y)) {
-          assert(person->livingItem_);
-          int livingItemX = person->livingItem_->getX() + person->living_->getLeft();
-          int livingItemY = person->livingItem_->getY() + person->living_->getTop();
-          if (x != livingItemX || y != livingItemY) {
-            person->currentPath_ = layout_->findPath(layout_->getTile(x, y), layout_->getTile(livingItemX, livingItemY));
-          }
-        }
-      } else {
-        if (person->shiftRoom_ && !person->shiftRoom_->isInside(x, y)) {
-          person->currentPath_ = layout_->findPath(layout_->getTile(x, y), person->shiftRoom_);
-        } else if (person->shiftRoom_ && person->shiftRoom_->isInside(x, y)) {
-          assert(person->shiftItem_);
-          int shiftItemX = person->shiftItem_->getX() + person->shiftRoom_->getLeft();
-          int shiftItemY = person->shiftItem_->getY() + person->shiftRoom_->getTop();
-          if (x != shiftItemX || y != shiftItemY) {
-            person->currentPath_ = layout_->findPath(layout_->getTile(x, y), layout_->getTile(shiftItemX, shiftItemY));
-          }
-        }
-      }
-    }
   }
 
   for (auto itr = weapons_.begin(); itr != weapons_.end(); ++itr) {
@@ -1031,7 +991,9 @@ void Ship::timeStep()
       weapon->fire();
     }
   }
-  weaponsInfo_->update();
+  if (weaponsInfo_) {
+    weaponsInfo_->update();
+  }
 
   if (lasers_.size() > 0) {
     set <LaserBeam*> toDelete;
@@ -1178,10 +1140,14 @@ void Ship::sufferHit( Weapon* weapon )
 
 void Ship::updateTiles()
 {
-  shipInfo_->setToUpdate(tilesToUpdate_.size());
+  int SZ = tilesToUpdate_.size();
+  if (SZ == 0) {
+    return;
+  }
   float generatedPressure = 0.005;
   addToUpdateSet_.clear();
   set<Tile*> toRemove;
+  set<Tile*> toGenerate;
   for (auto itr = tilesToUpdate_.begin(); itr != tilesToUpdate_.end(); ++itr) {
     Tile* tile = *itr;
     assert(tile);
@@ -1198,30 +1164,26 @@ void Ship::updateTiles()
     float newPressure = (p1 + p2 + p3 + p4) / 4.0;
     bool oxygenSupplied = (tile->getRoom() && tile->getRoom()->oxygenSupplied());
     if (newPressure < 1 && tile->isPassible() && oxygenSupplied) {
-      float deltaPressure = 1 - newPressure;
-      if (deltaPressure > 0.1) {
-        deltaPressure = 0.1;
-      }
-      float addedPressure = 0;
-      if (deltaPressure > generatedPressure) {
-        addedPressure = generatedPressure;
-        generatedPressure = 0;
-      } else {
-        addedPressure = deltaPressure;
-        generatedPressure -= deltaPressure;
-      }
-      newPressure += addedPressure;
+      toGenerate.insert(tile);
     }
     if (newPressure == tile->getPressure() && (newPressure < 0.001 || newPressure >= 0.999)) {
       toRemove.insert(tile);
     }
     tile->setPressure(newPressure);
   }
+  float newPressurePerTile = generatedPressure / (float)toGenerate.size();
+  for (auto itr = toGenerate.begin(); itr != toGenerate.end(); ++itr) {
+    Tile* tile = *itr;
+    tile->setPressure(tile->getPressure() + newPressurePerTile);
+  }
   for (auto itr = addToUpdateSet_.begin(); itr != addToUpdateSet_.end(); ++itr) {
     tilesToUpdate_.insert(*itr);
   }
   for (auto itr = toRemove.begin(); itr != toRemove.end(); ++itr) {
     tilesToUpdate_.erase(*itr);
+  }
+  if (shipInfo_) {
+    shipInfo_->setToUpdate(tilesToUpdate_.size());
   }
 }
 

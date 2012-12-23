@@ -151,6 +151,7 @@ public:
   void sufferHit(Weapon* weapon);
   void setAllFireAtWill(bool value);
   void addTileToUpdate(Tile* tile);
+  TileLayout* getLayout() {return layout_;}
 private:
   void drawWalls();
   void drawVerticalWall(Wall* wall);

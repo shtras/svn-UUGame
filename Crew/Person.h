@@ -16,20 +16,28 @@ struct Skills
   int Engines;
 };
 
+struct Stats
+{
+  int Hunger;
+  int Stamina;
+  int HP;
+};
+
 class Person
 {
   friend class Ship;
 public:
+  enum Action {Idle, Working, Sleeping, Going, Ready, Eating, BadAction};
   Person();
   ~Person();
   void pathStep();
+  void timeStep();
+  CString getActionName();
 public:
+  void desideNextAction();
   CString name_;
   int x_;
   int y_;
-  int health_;
-  int stamina_;
-  int hunger_;
   bool officer_;
   int rank_;
   Room* living_;
@@ -42,8 +50,11 @@ public:
   list<Tile*> currentPath_;
   int shift_;
   Skills skills_;
+  Stats stats_;
   float pathPosition_;
   GLuint faceTexID_;
   WCrewImage* imageInCrewPanel_;
   WCrewPlaceInRoom* imageInRoomsPanel_;
+  Ship* ship_;
+  Action action_;
 };

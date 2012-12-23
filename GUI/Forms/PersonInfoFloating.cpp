@@ -32,6 +32,22 @@ void PersonInfoFloating::init()
   shiftText_ = new WText();
   shiftText_->setDimensions(0.02, 0.6, 1, 1);
   addWidget(shiftText_);
+
+  actionText_ = new WText();
+  actionText_->setDimensions(0.02, 0.5, 1, 1);
+  addWidget(actionText_);
+
+  hpText_ = new WText();
+  hpText_->setDimensions(0.02, 0.4, 1, 1);
+  addWidget(hpText_);
+
+  staminaText_ = new WText();
+  staminaText_->setDimensions(0.02, 0.3, 1, 1);
+  addWidget(staminaText_);
+
+  hungerText_ = new WText();
+  hungerText_->setDimensions(0.02, 0.2, 1, 1);
+  addWidget(hungerText_);
 }
 
 void PersonInfoFloating::setHoveredWidgetCalling( Widget* widget )
@@ -52,4 +68,8 @@ void PersonInfoFloating::setHoveredWidgetCalling( Widget* widget )
   } else {
     shiftText_->setText("Working in shift " + CString(pers->shift_));
   }
+  actionText_->setText(pers->getActionName());
+  hpText_->setText("HP: " + CString(pers->stats_.HP));
+  staminaText_->setText("Stamina: " + CString(pers->stats_.Stamina));
+  hungerText_->setText("Hunger: " + CString(pers->stats_.Hunger));
 }
