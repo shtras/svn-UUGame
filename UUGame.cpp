@@ -535,7 +535,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
   _CrtMemState s1;
   _CrtMemCheckpoint(&s1);
 #endif
-
+  int a = 0;
+  glutInit(&a, NULL);
   int res = body(hInstance, hPrevInstance, lpCmdLine, nShowCmd);
 
 #ifdef DEBUG
